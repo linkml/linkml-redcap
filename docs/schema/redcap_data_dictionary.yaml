@@ -1,485 +1,555 @@
-name: redcap-data-dictionary
-description: A LinkML representation of REDCap data dictionaries, instruments, and
-  database structure
-title: redcap-data-dictionary
-see_also:
-- https://aslgraefe.github.io/redcap-data-dictionary
-id: https://w3id.org/aslgraefe/redcap-data-dictionary
-imports:
-- linkml:types
+---
+id: https://w3id.org/linkml/redcap-data-dictionary
+name: redcap_data_dictionary
+title: REDCap Data Dictionary LinkML Schema
+description: >-
+  A LinkML meta-schema that formally models the structure of REDCap data
+  dictionaries (CSV format). This schema defines the rules, constraints, and
+  relationships of all 18 REDCap data dictionary columns, enabling
+  programmatic validation, generation, and transformation of REDCap instruments.
+  It also provides extension points for ontology-based data models (e.g.,
+  RareLink-CDM) that embed coded terminologies directly into REDCap's variable
+  naming, choice encoding, and field annotation structures.
+
 license: MIT
+version: 0.1.0
+
+see_also:
+  - https://github.com/BIH-CEI/rarelink
+  - https://rarelink.readthedocs.io
+  - https://projectredcap.org
+
 prefixes:
-  redcap_data_dictionary:
-    prefix_prefix: redcap_data_dictionary
-    prefix_reference: https://w3id.org/aslgraefe/redcap-data-dictionary/
-  linkml:
-    prefix_prefix: linkml
-    prefix_reference: https://w3id.org/linkml/
-  biolink:
-    prefix_prefix: biolink
-    prefix_reference: https://w3id.org/biolink/
-  schema:
-    prefix_prefix: schema
-    prefix_reference: http://schema.org/
-  PATO:
-    prefix_prefix: PATO
-    prefix_reference: http://purl.obolibrary.org/obo/PATO_
-  example:
-    prefix_prefix: example
-    prefix_reference: https://example.org/
-default_prefix: redcap_data_dictionary
+  linkml: https://w3id.org/linkml/
+  redcap_dd: https://w3id.org/linkml/redcap-data-dictionary/
+  schema: http://schema.org/
+  SNOMEDCT: http://snomed.info/sct/
+  LOINC: http://loinc.org/
+  HP: http://purl.obolibrary.org/obo/HP_
+  MONDO: http://purl.obolibrary.org/obo/MONDO_
+  OMIM: https://omim.org/entry/
+  ORDO: http://www.orpha.net/ORDO/
+  NCIT: http://purl.obolibrary.org/obo/NCIT_
+  HGNC: https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/
+  ICD10CM: http://hl7.org/fhir/sid/icd-10-cm/
+  ICD11: https://icd.who.int/browse/2024-01/mms/en/
+  UO: http://purl.obolibrary.org/obo/UO_
+  ECO: http://purl.obolibrary.org/obo/ECO_
+  MAXO: http://purl.obolibrary.org/obo/MAXO_
+  ICF: https://www.who.int/classifications/icf/
+  GA4GH: https://www.ga4gh.org/
+  HL7FHIR: https://www.hl7.org/fhir/
+  ISO3166: https://www.iso.org/iso-3166-country-codes.html/
+
+default_prefix: redcap_dd
 default_range: string
-types:
-  string:
-    name: string
-    definition_uri: https://w3id.org/linkml/String
-    description: A character string
-    notes:
-    - In RDF serializations, a slot with range of string is treated as a literal or
-      type xsd:string.   If you are authoring schemas in LinkML YAML, the type is
-      referenced with the lower case "string".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    exact_mappings:
-    - schema:Text
-    base: str
-    uri: xsd:string
-  integer:
-    name: integer
-    definition_uri: https://w3id.org/linkml/Integer
-    description: An integer
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "integer".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    exact_mappings:
-    - schema:Integer
-    base: int
-    uri: xsd:integer
-  boolean:
-    name: boolean
-    definition_uri: https://w3id.org/linkml/Boolean
-    description: A binary (true or false) value
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "boolean".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    exact_mappings:
-    - schema:Boolean
-    base: Bool
-    uri: xsd:boolean
-    repr: bool
-  float:
-    name: float
-    definition_uri: https://w3id.org/linkml/Float
-    description: A real number that conforms to the xsd:float specification
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "float".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    exact_mappings:
-    - schema:Float
-    base: float
-    uri: xsd:float
-  double:
-    name: double
-    definition_uri: https://w3id.org/linkml/Double
-    description: A real number that conforms to the xsd:double specification
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "double".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    close_mappings:
-    - schema:Float
-    base: float
-    uri: xsd:double
-  decimal:
-    name: decimal
-    definition_uri: https://w3id.org/linkml/Decimal
-    description: A real number with arbitrary precision that conforms to the xsd:decimal
-      specification
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "decimal".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    broad_mappings:
-    - schema:Number
-    base: Decimal
-    uri: xsd:decimal
-  time:
-    name: time
-    definition_uri: https://w3id.org/linkml/Time
-    description: A time object represents a (local) time of day, independent of any
-      particular day
-    notes:
-    - URI is dateTime because OWL reasoners do not work with straight date or time
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "time".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    exact_mappings:
-    - schema:Time
-    base: XSDTime
-    uri: xsd:time
-    repr: str
-  date:
-    name: date
-    definition_uri: https://w3id.org/linkml/Date
-    description: a date (year, month and day) in an idealized calendar
-    notes:
-    - URI is dateTime because OWL reasoners don't work with straight date or time
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "date".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    exact_mappings:
-    - schema:Date
-    base: XSDDate
-    uri: xsd:date
-    repr: str
-  datetime:
-    name: datetime
-    definition_uri: https://w3id.org/linkml/Datetime
-    description: The combination of a date and time
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "datetime".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    exact_mappings:
-    - schema:DateTime
-    base: XSDDateTime
-    uri: xsd:dateTime
-    repr: str
-  date_or_datetime:
-    name: date_or_datetime
-    definition_uri: https://w3id.org/linkml/DateOrDatetime
-    description: Either a date or a datetime
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "date_or_datetime".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    base: str
-    uri: linkml:DateOrDatetime
-    repr: str
-  uriorcurie:
-    name: uriorcurie
-    definition_uri: https://w3id.org/linkml/Uriorcurie
-    description: a URI or a CURIE
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "uriorcurie".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    base: URIorCURIE
-    uri: xsd:anyURI
-    repr: str
-  curie:
-    name: curie
-    definition_uri: https://w3id.org/linkml/Curie
-    conforms_to: https://www.w3.org/TR/curie/
-    description: a compact URI
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "curie".
-    comments:
-    - in RDF serializations this MUST be expanded to a URI
-    - in non-RDF serializations MAY be serialized as the compact representation
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    base: Curie
-    uri: xsd:string
-    repr: str
-  uri:
-    name: uri
-    definition_uri: https://w3id.org/linkml/Uri
-    conforms_to: https://www.ietf.org/rfc/rfc3987.txt
-    description: a complete URI
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "uri".
-    comments:
-    - in RDF serializations a slot with range of uri is treated as a literal or type
-      xsd:anyURI unless it is an identifier or a reference to an identifier, in which
-      case it is translated directly to a node
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    close_mappings:
-    - schema:URL
-    base: URI
-    uri: xsd:anyURI
-    repr: str
-  ncname:
-    name: ncname
-    definition_uri: https://w3id.org/linkml/Ncname
-    description: Prefix part of CURIE
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "ncname".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    base: NCName
-    uri: xsd:string
-    repr: str
-  objectidentifier:
-    name: objectidentifier
-    definition_uri: https://w3id.org/linkml/Objectidentifier
-    description: A URI or CURIE that represents an object in the model.
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "objectidentifier".
-    comments:
-    - Used for inheritance and type checking
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    base: ElementIdentifier
-    uri: shex:iri
-    repr: str
-  nodeidentifier:
-    name: nodeidentifier
-    definition_uri: https://w3id.org/linkml/Nodeidentifier
-    description: A URI, CURIE or BNODE that represents a node in a model.
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "nodeidentifier".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    base: NodeIdentifier
-    uri: shex:nonLiteral
-    repr: str
-  jsonpointer:
-    name: jsonpointer
-    definition_uri: https://w3id.org/linkml/Jsonpointer
-    conforms_to: https://datatracker.ietf.org/doc/html/rfc6901
-    description: A string encoding a JSON Pointer. The value of the string MUST conform
-      to JSON Point syntax and SHOULD dereference to a valid object within the current
-      instance document when encoded in tree form.
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "jsonpointer".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    base: str
-    uri: xsd:string
-    repr: str
-  jsonpath:
-    name: jsonpath
-    definition_uri: https://w3id.org/linkml/Jsonpath
-    conforms_to: https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html
-    description: A string encoding a JSON Path. The value of the string MUST conform
-      to JSON Point syntax and SHOULD dereference to zero or more valid objects within
-      the current instance document when encoded in tree form.
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "jsonpath".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    base: str
-    uri: xsd:string
-    repr: str
-  sparqlpath:
-    name: sparqlpath
-    definition_uri: https://w3id.org/linkml/Sparqlpath
-    conforms_to: https://www.w3.org/TR/sparql11-query/#propertypaths
-    description: A string encoding a SPARQL Property Path. The value of the string
-      MUST conform to SPARQL syntax and SHOULD dereference to zero or more valid objects
-      within the current instance document when encoded as RDF.
-    notes:
-    - If you are authoring schemas in LinkML YAML, the type is referenced with the
-      lower case "sparqlpath".
-    from_schema: https://w3id.org/linkml/types
-    imported_from: linkml:types
-    base: str
-    uri: xsd:string
-    repr: str
-enums:
-  PersonStatus:
-    name: PersonStatus
-    definition_uri: https://w3id.org/aslgraefe/redcap-data-dictionary/PersonStatus
-    from_schema: https://w3id.org/aslgraefe/redcap-data-dictionary
-    permissible_values:
-      ALIVE:
-        text: ALIVE
-        description: the person is living
-        meaning: PATO:0001421
-      DEAD:
-        text: DEAD
-        description: the person is deceased
-        meaning: PATO:0001422
-      UNKNOWN:
-        text: UNKNOWN
-        description: the vital status is not known
-        todos:
-        - map this to an ontology
-slots:
-  id:
-    name: id
-    definition_uri: https://w3id.org/aslgraefe/redcap-data-dictionary/id
-    description: A unique identifier for a thing
-    from_schema: https://w3id.org/aslgraefe/redcap-data-dictionary
-    mappings:
-    - schema:identifier
-    slot_uri: schema:identifier
-    identifier: true
-    owner: NamedThing
-    domain_of:
-    - NamedThing
-    range: uriorcurie
-    required: true
-  name:
-    name: name
-    definition_uri: https://w3id.org/aslgraefe/redcap-data-dictionary/name
-    description: A human-readable name for a thing
-    from_schema: https://w3id.org/aslgraefe/redcap-data-dictionary
-    mappings:
-    - schema:name
-    slot_uri: schema:name
-    owner: NamedThing
-    domain_of:
-    - NamedThing
-    range: string
-  description:
-    name: description
-    definition_uri: https://w3id.org/aslgraefe/redcap-data-dictionary/description
-    description: A human-readable description for a thing
-    from_schema: https://w3id.org/aslgraefe/redcap-data-dictionary
-    mappings:
-    - schema:description
-    slot_uri: schema:description
-    owner: NamedThing
-    domain_of:
-    - NamedThing
-    range: string
-  primary_email:
-    name: primary_email
-    definition_uri: https://w3id.org/aslgraefe/redcap-data-dictionary/primary_email
-    description: The main email address of a person
-    from_schema: https://w3id.org/aslgraefe/redcap-data-dictionary
-    mappings:
-    - schema:email
-    slot_uri: schema:email
-    owner: Person
-    domain_of:
-    - Person
-    range: string
-  birth_date:
-    name: birth_date
-    definition_uri: https://w3id.org/aslgraefe/redcap-data-dictionary/birth_date
-    description: Date on which a person is born
-    from_schema: https://w3id.org/aslgraefe/redcap-data-dictionary
-    mappings:
-    - schema:birthDate
-    slot_uri: schema:birthDate
-    owner: Person
-    domain_of:
-    - Person
-    range: date
-  age_in_years:
-    name: age_in_years
-    definition_uri: https://w3id.org/aslgraefe/redcap-data-dictionary/age_in_years
-    description: Number of years since birth
-    from_schema: https://w3id.org/aslgraefe/redcap-data-dictionary
-    slot_uri: redcap_data_dictionary:age_in_years
-    owner: Person
-    domain_of:
-    - Person
-    range: integer
-  vital_status:
-    name: vital_status
-    definition_uri: https://w3id.org/aslgraefe/redcap-data-dictionary/vital_status
-    description: living or dead status
-    from_schema: https://w3id.org/aslgraefe/redcap-data-dictionary
-    slot_uri: redcap_data_dictionary:vital_status
-    owner: Person
-    domain_of:
-    - Person
-    range: PersonStatus
-  personCollection__people:
-    name: personCollection__people
-    from_schema: https://w3id.org/aslgraefe/redcap-data-dictionary
-    slot_uri: redcap_data_dictionary:people
-    alias: people
-    owner: PersonCollection
-    domain_of:
-    - PersonCollection
-    range: Person
-    multivalued: true
-    inlined: true
-    inlined_as_list: true
-  Person_primary_email:
-    name: Person_primary_email
-    definition_uri: https://w3id.org/aslgraefe/redcap-data-dictionary/primary_email
-    description: The main email address of a person
-    from_schema: https://w3id.org/aslgraefe/redcap-data-dictionary
-    mappings:
-    - schema:email
-    is_a: primary_email
-    domain: Person
-    slot_uri: schema:email
-    alias: primary_email
-    owner: Person
-    domain_of:
-    - Person
-    is_usage_slot: true
-    usage_slot_name: primary_email
-    range: string
-    pattern: ^\S+@[\S+\.]+\S+
+
+imports:
+  - linkml:types
+
+
+# =============================================================================
+# CLASSES
+# =============================================================================
 classes:
-  NamedThing:
-    name: NamedThing
-    definition_uri: https://w3id.org/aslgraefe/redcap-data-dictionary/NamedThing
-    description: A generic grouping for any identifiable entity
-    from_schema: https://w3id.org/aslgraefe/redcap-data-dictionary
-    mappings:
-    - schema:Thing
-    slots:
-    - id
-    - name
-    - description
-    class_uri: schema:Thing
-  Person:
-    name: Person
-    definition_uri: https://w3id.org/aslgraefe/redcap-data-dictionary/Person
-    description: Represents a Person
-    from_schema: https://w3id.org/aslgraefe/redcap-data-dictionary
-    is_a: NamedThing
-    slots:
-    - id
-    - name
-    - description
-    - Person_primary_email
-    - birth_date
-    - age_in_years
-    - vital_status
-    slot_usage:
-      primary_email:
-        name: primary_email
-        pattern: ^\S+@[\S+\.]+\S+
-    class_uri: redcap_data_dictionary:Person
-  PersonCollection:
-    name: PersonCollection
-    definition_uri: https://w3id.org/aslgraefe/redcap-data-dictionary/PersonCollection
-    description: A holder for Person objects
-    from_schema: https://w3id.org/aslgraefe/redcap-data-dictionary
-    slots:
-    - personCollection__people
+
+  # ---------------------------------------------------------------------------
+  # Top-Level Container
+  # ---------------------------------------------------------------------------
+  DataDictionary:
+    description: >-
+      A complete REDCap data dictionary representing one or more instruments
+      (forms). This is the top-level container that corresponds to the CSV file
+      uploaded to REDCap. Fields must be grouped contiguously by form_name.
+    tree_root: true
     attributes:
-      people:
-        name: people
-        range: Person
+      fields:
+        description: >-
+          Ordered list of all fields (variables) in the data dictionary.
+          Fields within the same form must be in contiguous rows.
+        range: Field
         multivalued: true
         inlined_as_list: true
-    class_uri: redcap_data_dictionary:PersonCollection
-    tree_root: true
-metamodel_version: 1.7.0
-source_file: redcap_data_dictionary.yaml
-source_file_date: '2026-04-15T15:29:05'
-source_file_size: 2318
-generation_date: '2026-04-15T15:29:31'
+        required: true
+    rules:
+      - description: >-
+          The first field in the data dictionary must be the record identifier
+          (typically record_id) and must be of field_type 'text'.
+      - description: >-
+          All fields belonging to the same form_name must be in contiguous
+          rows. No interleaving of forms is permitted.
 
+  # ---------------------------------------------------------------------------
+  # Core REDCap Field (mirrors one row of the CSV)
+  # ---------------------------------------------------------------------------
+  Field:
+    description: >-
+      A single variable (field) in a REDCap data dictionary. This class maps
+      directly to one row of the REDCap data dictionary CSV, with each
+      attribute corresponding to one of the 18 standard columns.
+    attributes:
+
+      variable_field_name:
+        description: >-
+          The unique variable name for this field. Must contain only lowercase
+          letters, numbers, and underscores. Cannot start with a number.
+          Must be unique across the entire project.
+        range: string
+        required: true
+        identifier: true
+        pattern: "^[a-z][a-z0-9_]*$"
+
+      form_name:
+        description: >-
+          The instrument (form) this field belongs to. Must be lowercase
+          with underscores only. All fields for a form must be contiguous.
+        range: string
+        required: true
+        pattern: "^[a-z][a-z0-9_]*$"
+
+      section_header:
+        description: >-
+          Optional section header text displayed above this field to visually
+          group fields within a form. Supports HTML/rich text.
+        range: string
+        required: false
+
+      field_type:
+        description: >-
+          The type of input field. Determines how the field is rendered
+          in the data entry form and what data it can accept.
+        range: FieldType
+        required: true
+
+      field_label:
+        description: >-
+          The display label shown to users during data entry. Supports
+          HTML/rich text formatting. For ontology-based models, this
+          typically includes a section number and human-readable name
+          (e.g., '2.1 Date of birth').
+        range: string
+        required: true
+
+      choices_calculations_slider_labels:
+        description: >-
+          For dropdown, radio, and checkbox fields: pipe-delimited list of
+          'raw_value, label' pairs (e.g., '1, Yes | 2, No | 3, Unknown').
+          For calc fields: the calculation expression.
+          For slider fields: 'left | center | right' anchor labels.
+          For text fields with BioPortal ontology autocomplete:
+          'BIOPORTAL:ONTOLOGY_NAME' (e.g., 'BIOPORTAL:HP').
+        range: string
+        required: false
+
+      field_note:
+        description: >-
+          Supplementary text displayed below the field during data entry.
+          Typically provides instructions, expected formats, or context.
+        range: string
+        required: false
+
+      text_validation_type_or_show_slider_number:
+        description: >-
+          For text fields: the validation type constraining input format.
+          For slider fields: whether to show the numeric value ('number').
+        range: TextValidationType
+        required: false
+
+      text_validation_min:
+        description: >-
+          Minimum allowed value for validated text fields (dates, numbers).
+        range: string
+        required: false
+
+      text_validation_max:
+        description: >-
+          Maximum allowed value for validated text fields (dates, numbers).
+        range: string
+        required: false
+
+      identifier:
+        description: >-
+          Whether this field contains identifying information (PHI).
+          Set to 'y' for identifier fields. Affects data export behaviour.
+        range: IdentifierStatus
+        required: false
+
+      branching_logic:
+        description: >-
+          Conditional display logic. Uses REDCap's branching syntax
+          (e.g., '[field_name] = ''value'''). When specified, the field
+          is only shown if the condition evaluates to true.
+        range: string
+        required: false
+
+      required_field:
+        description: >-
+          Whether the field is required for form completion. Set to 'y'
+          for required fields. Can also contain conditional expressions
+          for conditionally required fields.
+        range: string
+        required: false
+
+      custom_alignment:
+        description: >-
+          Controls the alignment of the field on the form.
+          LV = Left Vertical, LH = Left Horizontal,
+          RV = Right Vertical (default), RH = Right Horizontal.
+        range: CustomAlignment
+        required: false
+
+      question_number:
+        description: >-
+          Custom question number for surveys. Overrides auto-numbering.
+          Any text entered here is displayed as the question number.
+        range: string
+        required: false
+
+      matrix_group_name:
+        description: >-
+          Groups multiple radio/checkbox fields into a matrix display.
+          All fields with the same matrix_group_name must be contiguous
+          and use the same field_type and choices.
+        range: string
+        required: false
+        pattern: "^[a-z0-9_]*$"
+
+      matrix_ranking:
+        description: >-
+          Whether ranking is enabled for this matrix group. When enabled,
+          no two fields in the matrix can have the same selected value.
+        range: MatrixRanking
+        required: false
+
+      field_annotation:
+        description: >-
+          Free-text annotation field. In ontology-based models (e.g.,
+          RareLink), this contains structured metadata including the
+          semantic variable code, ontology-coded choices, ontology
+          versions, and mappings to interoperability standards.
+        range: string
+        required: false
+
+  # ---------------------------------------------------------------------------
+  # Structured Choice (for programmatic use beyond flat CSV)
+  # ---------------------------------------------------------------------------
+  Choice:
+    description: >-
+      A single permissible value for a dropdown, radio, or checkbox field.
+      In REDCap CSV format, choices are encoded as a pipe-delimited string,
+      but this class provides a structured representation for programmatic
+      generation and validation.
+    attributes:
+      raw_value:
+        description: >-
+          The stored value (code) for this choice. In ontology-based models,
+          this typically encodes the ontology prefix and concept ID
+          (e.g., 'snomedct_248152002'). Must contain only lowercase letters,
+          numbers, and underscores to comply with REDCap naming rules.
+        range: string
+        required: true
+        pattern: "^[a-z0-9_]*$"
+      label:
+        description: >-
+          The human-readable display label for this choice
+          (e.g., 'Female', 'Male', 'Unknown').
+        range: string
+        required: true
+
+  # ---------------------------------------------------------------------------
+  # Ontology Annotation (structured field annotation for ontology-based models)
+  # ---------------------------------------------------------------------------
+  OntologyAnnotation:
+    description: >-
+      Structured metadata embedded in a field's annotation column for
+      ontology-based data models. This formalises the annotation pattern
+      used in RareLink and similar frameworks where each field carries
+      its semantic definition, coded choices, ontology versions, and
+      mappings to interoperability standards (HL7 FHIR, GA4GH Phenopackets).
+    attributes:
+
+      variable_code:
+        description: >-
+          The ontology code defining the semantic meaning of this field.
+          Format: 'ONTOLOGY:CODE | Human-Readable Label |'
+          Example: 'SNOMED:184099003 | Date of Birth |'
+        range: string
+        required: true
+
+      coded_choices:
+        description: >-
+          List of ontology-coded choices with their labels. Each entry
+          follows the format 'ONTOLOGY:CODE | Label'.
+          Set to 'n/a' for free-text fields without coded choices.
+        range: string
+        multivalued: true
+        required: false
+
+      ontology_versions:
+        description: >-
+          The ontology version(s) referenced by this field's variable
+          code and/or choices. Example: 'SNOMED CT 2025AB'
+        range: string
+        multivalued: true
+        required: false
+
+      fhir_mapping:
+        description: >-
+          The HL7 FHIR resource path this field maps to.
+          Example: 'Patient.birthDate'
+        range: string
+        required: false
+
+      phenopacket_mapping:
+        description: >-
+          The GA4GH Phenopacket Schema element this field maps to.
+          Example: 'Individual.date_of_birth'
+        range: string
+        required: false
+
+  # ---------------------------------------------------------------------------
+  # Instrument (logical grouping derived from form_name)
+  # ---------------------------------------------------------------------------
+  Instrument:
+    description: >-
+      A logical REDCap instrument (form) grouping related fields.
+      This class is not directly represented in the CSV but is derived
+      from the contiguous grouping of fields sharing the same form_name.
+      In RareLink, instruments follow the naming convention
+      'rarelink_N_section_name' and each has a completion status field.
+    attributes:
+      instrument_name:
+        description: >-
+          The form_name shared by all fields in this instrument.
+        range: string
+        required: true
+        identifier: true
+        pattern: "^[a-z][a-z0-9_]*$"
+      instrument_label:
+        description: >-
+          Human-readable label for the instrument. REDCap derives this
+          by capitalising and replacing underscores with spaces.
+        range: string
+        required: false
+      is_repeating:
+        description: >-
+          Whether this instrument supports repeating instances.
+          In RareLink, sections 4-8 (care pathway, disease, genetic
+          findings, phenotypic features, measurements, family history)
+          are repeating instruments.
+        range: boolean
+        required: false
+      fields:
+        description: All fields belonging to this instrument.
+        range: Field
+        multivalued: true
+        inlined_as_list: true
+        required: true
+
+
+# =============================================================================
+# ENUMS
+# =============================================================================
+enums:
+
+  FieldType:
+    description: >-
+      The complete set of REDCap field types that determine how a
+      variable is rendered and what data it accepts.
+    permissible_values:
+      text:
+        description: >-
+          Single-line text input. Can be combined with validation types
+          (date_ymd, integer, number, email, etc.) and BioPortal
+          ontology autocomplete.
+      notes:
+        description: Large multi-line text area for free-text entry.
+      dropdown:
+        description: >-
+          Single-select dropdown menu. Requires choices to be specified
+          in the choices column.
+      radio:
+        description: >-
+          Single-select radio button group. Requires choices to be
+          specified in the choices column.
+      checkbox:
+        description: >-
+          Multi-select checkboxes. Requires choices. Each checkbox
+          creates a separate binary variable in the export.
+      yesno:
+        description: >-
+          Built-in Yes/No radio buttons (stored as 1/0).
+      truefalse:
+        description: >-
+          Built-in True/False radio buttons (stored as 1/0).
+      calc:
+        description: >-
+          Calculated field. The calculation expression is specified
+          in the choices column.
+      file:
+        description: File upload field for attaching documents or images.
+      slider:
+        description: >-
+          Visual analogue scale (0-100). Anchor labels are specified
+          in the choices column as 'left | center | right'.
+      descriptive:
+        description: >-
+          Display-only field for instructional text, images, or HTML
+          content. Does not collect data.
+      sql:
+        description: >-
+          Dynamic dropdown populated by a SQL query against the
+          REDCap database.
+
+  TextValidationType:
+    description: >-
+      Validation rules for text fields constraining the input format.
+    permissible_values:
+      date_ymd:
+        description: Date in YYYY-MM-DD format.
+      date_mdy:
+        description: Date in MM-DD-YYYY format.
+      date_dmy:
+        description: Date in DD-MM-YYYY format.
+      datetime_ymd:
+        description: Datetime in YYYY-MM-DD HH:MM format.
+      datetime_mdy:
+        description: Datetime in MM-DD-YYYY HH:MM format.
+      datetime_dmy:
+        description: Datetime in DD-MM-YYYY HH:MM format.
+      datetime_seconds_ymd:
+        description: Datetime with seconds in YYYY-MM-DD HH:MM:SS format.
+      time:
+        description: Time in HH:MM format.
+      integer:
+        description: Whole number (no decimals).
+      number:
+        description: Decimal number.
+      number_1dp:
+        description: Number with 1 decimal place.
+      number_2dp:
+        description: Number with 2 decimal places.
+      phone:
+        description: Phone number format.
+      email:
+        description: Email address format.
+      zipcode:
+        description: US ZIP code format.
+      alpha_only:
+        description: Letters only (no numbers or special characters).
+
+  CustomAlignment:
+    description: Field alignment options for the data entry form.
+    permissible_values:
+      LV:
+        description: Left Vertical
+      LH:
+        description: Left Horizontal
+      RV:
+        description: Right Vertical (default)
+      RH:
+        description: Right Horizontal
+
+  IdentifierStatus:
+    description: Whether a field contains Protected Health Information.
+    permissible_values:
+      y:
+        description: Field contains identifying information (PHI).
+      '':
+        description: Field does not contain identifying information.
+
+  MatrixRanking:
+    description: Whether matrix ranking is enabled.
+    permissible_values:
+      y:
+        description: Ranking is enabled for this matrix group.
+      '':
+        description: Ranking is not enabled.
+
+  # ---------------------------------------------------------------------------
+  # Ontology-Based Variable Naming Prefixes (RareLink convention)
+  # ---------------------------------------------------------------------------
+  OntologyPrefix:
+    description: >-
+      Recognised ontology prefixes used in ontology-based REDCap variable
+      naming. In the RareLink convention, variable names encode their
+      semantic source as: prefix_conceptid (e.g., snomedct_184099003).
+      This enum defines the valid prefixes.
+    permissible_values:
+      snomedct:
+        description: SNOMED CT concept
+        meaning: SNOMEDCT:0
+      loinc:
+        description: LOINC observation code
+        meaning: LOINC:0
+      hp:
+        description: Human Phenotype Ontology term
+        meaning: HP:0000000
+      mondo:
+        description: Monarch Disease Ontology term
+        meaning: MONDO:0000000
+      ncit:
+        description: NCI Thesaurus concept
+        meaning: NCIT:C0
+      hl7fhir:
+        description: HL7 FHIR element reference
+        meaning: HL7FHIR:0
+      ga4gh:
+        description: GA4GH schema element reference
+        meaning: GA4GH:0
+      ordo:
+        description: Orphanet Rare Disease Ontology term
+        meaning: ORDO:0
+      omim:
+        description: OMIM entry reference
+        meaning: OMIM:0
+      hgnc:
+        description: HGNC gene symbol
+        meaning: HGNC:0
+      maxo:
+        description: Medical Action Ontology term
+        meaning: MAXO:0
+      icf:
+        description: ICF classification code
+        meaning: ICF:0
+      ln:
+        description: LOINC panel or group code (alternative prefix)
+        meaning: LOINC:0
+
+  # ---------------------------------------------------------------------------
+  # BioPortal Ontology References (for text field autocomplete)
+  # ---------------------------------------------------------------------------
+  BioPortalOntology:
+    description: >-
+      Ontology identifiers available through REDCap's BioPortal
+      integration for text field autocomplete. Used in the choices
+      column as 'BIOPORTAL:ONTOLOGY_NAME'.
+    permissible_values:
+      HP:
+        description: Human Phenotype Ontology
+      MONDO:
+        description: Monarch Disease Ontology
+      SNOMEDCT:
+        description: SNOMED CT
+      ICD10CM:
+        description: ICD-10 Clinical Modification
+      OMIM:
+        description: Online Mendelian Inheritance in Man
+      ORDO:
+        description: Orphanet Rare Disease Ontology
+      LOINC:
+        description: Logical Observation Identifiers Names and Codes
+      HGNC-NR:
+        description: HGNC gene nomenclature (non-redundant)
+      UO:
+        description: Units of Measurement Ontology
+      NCIT:
+        description: NCI Thesaurus
+      NCBITAXON:
+        description: NCBI Taxonomy
+      ECO:
+        description: Evidence and Conclusion Ontology
+      MAXO:
+        description: Medical Action Ontology
+      ICF:
+        description: International Classification of Functioning
