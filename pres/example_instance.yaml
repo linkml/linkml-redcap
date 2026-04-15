@@ -1,0 +1,67 @@
+# Example: a minimal REDCap DD instance conforming to the schema
+# Shows the first few fields of the RareLink Personal Information instrument
+
+fields:
+  - variable_field_name: record_id
+    form_name: rarelink_1_formal_criteria
+    field_type: text
+    field_label: Registry ID of the Individual
+
+  - variable_field_name: snomedct_422549004
+    form_name: rarelink_1_formal_criteria
+    field_type: text
+    field_label: "1.1 Pseudonym"
+    field_note: "The (local) patient-related Identification code"
+    required_field: "y"
+    field_annotation: >-
+      Variable:
+      SNOMED:422549004 | Pseudonym |
+      Choices: n/a
+      Version(s):
+      - SNOMED CT 2025AB
+      Mapping:
+      - HL7 FHIR Expression v4.0.1: Patient.identifier.value
+      - GA4GH Phenopacket Schema v2.0 Element: Individual.id
+
+  - variable_field_name: snomedct_184099003
+    form_name: rarelink_2_personal_information
+    field_type: text
+    field_label: "2.1 Date of birth"
+    field_note: "The individual's date of birth"
+    text_validation_type_or_show_slider_number: date_ymd
+    required_field: "y"
+    field_annotation: >-
+      Variable:
+      SNOMED:184099003 | Date of Birth |
+      Choices: n/a
+      Version(s):
+      - SNOMED CT 2025AB
+      Mapping:
+      - HL7 FHIR Expression v4.0.1: Patient.birthDate
+      - GA4GH Phenopacket Schema v2.0 Element: Individual.date_of_birth
+
+  - variable_field_name: loinc_76689_9
+    form_name: rarelink_2_personal_information
+    field_type: dropdown
+    field_label: "2.2 Sex at birth"
+    field_note: "The individual's sex that was assigned at birth"
+    choices_calculations_slider_labels: >-
+      snomedct_248152002, Female |
+      snomedct_248153007, Male |
+      snomedct_184115007, Patient sex unknown |
+      snomedct_32570691000036108, Intersex |
+      snomedct_1220561009, Not recorded
+    field_annotation: >-
+      Variable:
+      LOINC:76689-9 | Sex at Birth |
+      Choices:
+      - SNOMED:248152002 | Female
+      - SNOMED:248153007 | Male
+      - SNOMED:184115007 | Patient sex unknown
+      - SNOMED:32570691000036108 | Intersex
+      - SNOMED:1220561009 | Not recorded
+      Version(s):
+      - SNOMED CT 2025AB
+      Mapping:
+      - HL7 FHIR Expression v4.0.1: Patient.extension:individual-recordedSexOrGender
+      - GA4GH Phenopacket Schema v2.0 Element: Individual.sex
