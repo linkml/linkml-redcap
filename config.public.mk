@@ -8,7 +8,7 @@
 # - just works fine with quoted variables of dot-env files like this one
 LINKML_SCHEMA_NAME="redcap_data_dictionary"
 LINKML_SCHEMA_AUTHOR="Adam Graefe <adam.graefe@charite.de>"
-LINKML_SCHEMA_DESCRIPTION="A LinkML representation of REDCap data dictionaries, instruments, and database structure"
+LINKML_SCHEMA_DESCRIPTION="A LinkML schema of a REDCap data dictionary including its rules and constraints."
 LINKML_SCHEMA_SOURCE_DIR="src/redcap_data_dictionary/schema"
 
 ###### linkml generator variables, used by justfile

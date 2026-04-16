@@ -1,73 +1,70 @@
-[build-system]
-requires = ["hatchling", "uv-dynamic-versioning"]
-build-backend = "hatchling.build"
-
-[project]
-name = "redcap_data_dictionary"
-description = "A LinkML representation of REDCap data dictionaries, instruments, and database structure"
-authors = [
-  {name = "Adam Graefe", email = "adam.graefe@charite.de"},
-]
+[tool.poetry]
+name = "linkml-redcap"
+version = "0.1.0"
+description = "LinkML schemas modelling REDCap structures — starting with the data dictionary"
+authors = ["Adam Graefe <adam.graefe@bih-charite.de>"]
 license = "MIT"
-license-files = ["LICENSE"]
 readme = "README.md"
-requires-python = ">=3.9,<4.0"
-dynamic = ["version"]
+homepage = "https://github.com/p2gx/linkml-redcap"
+repository = "https://github.com/p2gx/linkml-redcap"
+documentation = "https://p2gx.github.io/linkml-redcap"
+keywords = [
+    "linkml",
+    "redcap",
+    "data-dictionary",
+    "ontology",
+    "fair",
+    "rare-disease",
+    "phenopackets",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Healthcare Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+packages = [{ include = "linkml_redcap", from = "src" }]
 
-dependencies = [
-  "linkml-runtime >=1.9.4",
+# Ship schema YAMLs inside the wheel so importlib.resources can find them.
+include = [
+    { path = "src/linkml_redcap/**/schema/*.yaml", format = ["sdist", "wheel"] },
 ]
 
-[dependency-groups]
-dev = [
-    "linkml>=1.9.3",
-    "mkdocs-material>=8.2.8",
-    "mkdocs-mermaid2-plugin>=1.1.1",
-    "mkdocs-pymdownx-material-extras>=2.5.6",
-    "jupyter>=1.0.0",
-    "mknotebooks>= 0.8.0",
-]
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+linkml-runtime = ">=1.9.4"
 
-# See https://hatch.pypa.io/latest/config/build/#file-selection for how to
-# explicitly include files other than default into the build distributions.
+[tool.poetry.group.dev.dependencies]
+linkml = ">=1.8.0"       # for gen-python, gen-pydantic, linkml-lint, linkml-validate
+pytest = ">=8.0"
+pytest-cov = ">=5.0"
+ruff = ">=0.5"
 
-[tool.hatch.version]
-source = "uv-dynamic-versioning"
+[tool.poetry.group.docs.dependencies]
+mkdocs = ">=1.6"
+mkdocs-material = ">=9.5"
+mkdocs-mermaid2-plugin = ">=1.1"
 
-# Ref.: https://github.com/ninoseki/uv-dynamic-versioning/
-[tool.uv-dynamic-versioning]
-vcs = "git"
-style = "pep440"
-fallback-version = "0.0.0"
+[build-system]
+requires = ["poetry-core>=1.5.0"]
+build-backend = "poetry.core.masonry.api"
 
-# Ref.: https://docs.pytest.org/en/stable/reference/reference.html#configuration-options
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM"]
+ignore = ["E501"]  # line length handled by formatter
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-
-# Ref.: https://github.com/codespell-project/codespell
-[tool.codespell]
-skip = [
-  "LICENSE",
-  "pyproject.toml",
-  "uv.lock",
-  "project/*",
-  "src/redcap_data_dictionary/datamodel/redcap_data_dictionary_pydantic.py",
-  "src/redcap_data_dictionary/datamodel/redcap_data_dictionary.py",
-]
-
-# Reminder: words have to be lowercased for the ignore-words-list
-ignore-words-list = "linke"
-quiet-level = 3
-
-# Ref.: https://github.com/crate-ci/typos (spell checker)
-[tool.typos.default.extend-words]
-linke = "linke"
-[tool.typos.files]
-extend-exclude = [
-  "LICENSE",
-  "uv.lock",
-  "pyproject.toml",
-  "project/*",
-  "src/redcap_data_dictionary/datamodel/redcap_data_dictionary_pydantic.py",
-  "src/redcap_data_dictionary/datamodel/redcap_data_dictionary.py",
-]
+addopts = "-ra --strict-markers"
