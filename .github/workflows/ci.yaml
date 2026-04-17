@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.8.3
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Cache Poetry virtualenv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        run: poetry install --with dev --no-interaction
+
+      - name: Lint with ruff
+        run: poetry run ruff check src tests
+
+      - name: Validate LinkML schema
+        run: |
+          poetry run linkml-lint src/linkml_redcap/data_dictionary/schema/redcap_data_dictionary.yaml
+          poetry run gen-json-schema src/linkml_redcap/data_dictionary/schema/redcap_data_dictionary.yaml > /dev/null
+          poetry run gen-python src/linkml_redcap/data_dictionary/schema/redcap_data_dictionary.yaml > /dev/null
+          poetry run gen-pydantic src/linkml_redcap/data_dictionary/schema/redcap_data_dictionary.yaml > /dev/null
+
+      - name: Run tests
+        run: poetry run pytest --cov=linkml_redcap --cov-report=term-missing
