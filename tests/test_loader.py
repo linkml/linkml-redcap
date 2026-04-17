@@ -2,7 +2,8 @@
 
 from pathlib import Path
 
-from linkml_redcap.data_dictionary import schema_path, schema_view
+from linkml_redcap import __version__
+from linkml_redcap.data_dictionary import SCHEMA_FILENAME, schema_path, schema_view
 
 
 def test_schema_path_exists():
@@ -14,12 +15,10 @@ def test_schema_path_exists():
 
 def test_schema_view_loads():
     sv = schema_view()
-    # Sanity: core classes from the meta-schema are reachable
     assert "DataDictionary" in sv.all_classes()
     assert "Field" in sv.all_classes()
     assert "FieldType" in sv.all_enums()
 
 
 def test_version_importable():
-    import linkml_redcap_data_dictionary
-    assert linkml_redcap_data_dictionary.__version__
+    assert __version__

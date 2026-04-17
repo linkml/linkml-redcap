@@ -281,7 +281,7 @@ class IdentifierStatus(str, Enum):
     """
     Field contains identifying information (PHI).
     """
-     = ""
+    empty = ""
     """
     Field does not contain identifying information.
     """
@@ -295,7 +295,7 @@ class MatrixRanking(str, Enum):
     """
     Ranking is enabled for this matrix group.
     """
-     = ""
+    empty = ""
     """
     Ranking is not enabled.
     """
