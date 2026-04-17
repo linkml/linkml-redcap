@@ -1,9 +1,18 @@
 # linkml-redcap
 
-LinkML schemas modelling REDCap structures. This package is the canonical
-source of the meta-schema that formalises what a valid REDCap data dictionary looks like — field naming rules, the 18-column CSV structure, ontology-based annotation conventions, and the relationships between instruments, fields, and choices.
+[![CI](https://github.com/p2gx/linkml-redcap/actions/workflows/ci.yml/badge.svg)](https://github.com/aslgraefe/linkml-redcap/actions/workflows/ci.yml)
+[![PyPI version](https://badge.fury.io/py/linkml-redcap.svg)](https://badge.fury.io/py/linkml-redcap)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-It's designed as an umbrella: `data_dictionary` is the first submodule, with room for additional submodules (`project`, `api`, etc.) as we formalise other REDCap structures.
+LinkML schemas modelling REDCap structures. This package is the canonical
+source of the meta-schema that formalises what a valid REDCap data dictionary
+looks like — field naming rules, the 18-column CSV structure, ontology-based
+annotation conventions, and the relationships between instruments, fields,
+and choices.
+
+It's designed as an umbrella: `data_dictionary` is the first submodule, with
+room for additional submodules as we formalise other REDCap structures. Any 
+contribution or collaboration is welcome!
 
 ## Install
 
@@ -64,6 +73,10 @@ makes those rules machine-readable so downstream tools can:
 - **Drive** runtime engines that route flat REDCap records into nested
   structures, without hard-coding per-instrument routing logic
 
+For more background on the architecture and how this connects to RareLink's
+Phenopacket export pipeline, see `instructions/PRESENTATION.md` and
+`instructions/EXAMPLE_WORKFLOW.md` in this repository.
+
 ## Ecosystem
 
 - [**RareLink**](https://github.com/BIH-CEI/rarelink) — the REDCap-based
@@ -83,7 +96,10 @@ poetry install --with dev
 
 # Validate the schema
 poetry run linkml-lint src/linkml_redcap/data_dictionary/schema/redcap_data_dictionary.yaml
-poetry run gen-json-schema src/linkml_redcap/data_dictionary/schema/redcap_data_dictionary.yaml > /dev/null
+
+# Generate Python dataclasses
+poetry run gen-python src/linkml_redcap/data_dictionary/schema/redcap_data_dictionary.yaml \
+    > src/linkml_redcap/data_dictionary/datamodel/redcap_data_dictionary.py
 
 # Run tests
 poetry run pytest
