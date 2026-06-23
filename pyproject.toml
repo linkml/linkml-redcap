@@ -2,7 +2,10 @@
 name = "linkml-redcap"
 version = "0.1.0"
 description = "LinkML schemas modelling REDCap structures — the data dictionary and the record-data envelope"
-authors = ["Adam Graefe <adam.graefe@bih-charite.de>"]
+authors = [
+    {name = "Adam SL Graefe", email = "adam.graefe@charite.de"},
+    {name = "Corey Cox", email = "corey@tislab.org"}
+]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/linkml/linkml-redcap"
@@ -44,15 +47,17 @@ python = ">=3.10,<3.13"
 linkml-runtime = ">=1.9.4"
 
 [tool.poetry.group.dev.dependencies]
-linkml = ">=1.8.0"       # for gen-python, gen-pydantic, linkml-lint, linkml-validate
+linkml = ">=1.8.0"       # for gen-pydantic, gen-doc, linkml-lint, linkml-validate
 pytest = ">=8.0"
 pytest-cov = ">=5.0"
 ruff = ">=0.5"
+pre-commit = ">=3.5"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = ">=1.6"
 mkdocs-material = ">=9.5"
 mkdocs-mermaid2-plugin = ">=1.1"
+mkdocs-include-markdown-plugin = ">=6.0"  # render instructions/*.md as doc pages
 
 [build-system]
 requires = ["poetry-core>=1.5.0"]
