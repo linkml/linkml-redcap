@@ -3,8 +3,8 @@ name = "linkml-redcap"
 version = "0.1.0"
 description = "LinkML schemas modelling REDCap structures — the data dictionary and the record-data envelope"
 authors = [
-    {name = "Adam SL Graefe", email = "adam.graefe@charite.de"},
-    {name = "Corey Cox", email = "corey@tislab.org"}
+    "Adam SL Graefe <adam.graefe@charite.de>",
+    "Corey Cox <corey@tislab.org>"
 ]
 license = "MIT"
 readme = "README.md"
