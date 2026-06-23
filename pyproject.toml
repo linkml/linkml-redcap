@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "linkml-redcap"
 version = "0.1.0"
-description = "LinkML schemas modelling REDCap structures — starting with the data dictionary"
+description = "LinkML schemas modelling REDCap structures — the data dictionary and the record-data envelope"
 authors = ["Adam Graefe <adam.graefe@bih-charite.de>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/p2gx/linkml-redcap"
-repository = "https://github.com/p2gx/linkml-redcap"
-documentation = "https://p2gx.github.io/linkml-redcap"
+homepage = "https://github.com/linkml/linkml-redcap"
+repository = "https://github.com/linkml/linkml-redcap"
+documentation = "https://linkml.github.io/linkml-redcap"
 keywords = [
     "linkml",
     "redcap",
@@ -33,9 +33,10 @@ classifiers = [
 ]
 packages = [{ include = "linkml_redcap", from = "src" }]
 
-# Ship schema YAMLs inside the wheel so importlib.resources can find them.
+# Ship schema YAMLs and the py.typed marker inside the wheel.
 include = [
     { path = "src/linkml_redcap/**/schema/*.yaml", format = ["sdist", "wheel"] },
+    { path = "src/linkml_redcap/py.typed", format = ["sdist", "wheel"] },
 ]
 
 [tool.poetry.dependencies]
