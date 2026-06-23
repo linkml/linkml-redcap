@@ -18,9 +18,8 @@ Initial release.
 
 - **`data_dictionary` submodule** — a LinkML meta-schema for the REDCap data
   dictionary (18-column CSV): classes `DataDictionary`, `Field`, `Choice`,
-  `OntologyAnnotation`, `Instrument`; enums `FieldType`, `TextValidationType`
-  (incl. the comma-decimal and seconds variants), `CustomAlignment`,
-  `IdentifierStatus`, `MatrixRanking`, `OntologyPrefix`, `BioPortalOntology`.
+  `Instrument`; enums `FieldType`, `TextValidationType` (incl. the comma-decimal
+  and seconds variants), `CustomAlignment`, `IdentifierStatus`, `MatrixRanking`.
 - **`record` submodule** — a LinkML schema for REDCap record data in both
   serializations:
   - `FlatRecord` (abstract) — the flat export row;
