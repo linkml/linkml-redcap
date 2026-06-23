@@ -6,8 +6,6 @@ repos:
     hooks:
       - id: check-toml
       - id: check-yaml
-        # mkdocs.yml uses !!python/name tags unsupported by the safe YAML loader
-        exclude: ^mkdocs\.yml$
       - id: end-of-file-fixer
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
