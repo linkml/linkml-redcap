@@ -19,7 +19,8 @@ def schema_path() -> Path:
         return Path(p)
 
 
-def schema_view() -> "SchemaView":
+def schema_view() -> SchemaView:
     """Return a SchemaView instance ready for introspection."""
     from linkml_runtime.utils.schemaview import SchemaView
+
     return SchemaView(str(schema_path()))
