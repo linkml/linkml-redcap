@@ -1,0 +1,305 @@
+---
+id: https://w3id.org/linkml/redcap-record
+name: redcap_record
+title: REDCap Record LinkML Schema
+description: >-
+  The single source of truth for the **REDCap record representation** — the
+  actual shape of REDCap record data — as opposed to the data dictionary that
+  describes it (see the sibling ``redcap_data_dictionary`` schema).
+
+  REDCap's record model is a record (``record_id``) that, in longitudinal and/or
+  repeating projects, contains repeating-instrument instances identified by
+  ``(redcap_repeat_instrument, redcap_repeat_instance)``. This schema models that
+  model in the **two serializations** the data uses:
+
+  1. FLAT — the native flat export (REDCap API ``content=record``, ``type=flat``,
+     or the CSV/JSON download): a list of rows, one row per
+     (record, event, repeat-instrument, repeat-instance), with all field
+     variables side by side and an empty string for any field outside the row's
+     instrument. ``FlatRecord`` models that row.
+
+  2. STRUCTURED — the lossless record-grouped serialization: one object per
+     ``record_id`` with its repeating-instrument instances nested in a
+     ``repeated_elements`` list. ``StructuredRecord`` is the root and
+     ``RepeatedElement`` is the ``(instrument, instance)`` wrapper. This is
+     REDCap's own record model serialized hierarchically rather than as flat
+     rows — a faithful re-grouping that adds and loses nothing. The lossless
+     conversion between the two serializations is
+     ``linkml_redcap.record.grouping``.
+
+  Both serializations, and the conversion between them, are **vendor-neutral**:
+  they depend only on REDCap's record/repeat model, so this package is useful to
+  any REDCap user, not just RareLink. The structured envelope is deliberately
+  **generic and convention-free** — it does NOT bucket fields into typed
+  instrument classes, impose variable-naming rules, or define ontology/Phenopacket
+  mappings. That *semantic* layer is the consuming project's job (the typed
+  instrument classes that specialise ``StructuredRecord`` / ``RepeatedElement``)
+  and rarelink's job (the conventions and the Phenopacket/FHIR engine). Nothing
+  RareLink-specific is defined or duplicated here.
+
+  Scope (v1): the ``type=flat`` data, in its flat and structured serializations.
+  REDCap's ``type=eav`` export (a long, one-datapoint-per-row entity-attribute-
+  value format) and its CDISC ODM/XML hierarchy (a different event→form→item
+  nesting) are out of scope; the structural slots here are the same
+  discriminators EAV uses, so an ``EavRecord`` could be added later additively.
+
+  Typing principle: REDCap exports every value as a string and uses an empty
+  string for "no value". This schema provides a typed primitive for each REDCap
+  value space (the date/time/number ``redcap_*`` types and the built-in enums)
+  so a project's schema can give every field a defined range — never a bare
+  ``string`` where REDCap actually constrains the value, and never ``Any``.
+
+license: MIT
+version: 0.1.0
+
+# ---------------------------------------------------------------------------
+# BACKWARDS-COMPATIBILITY POLICY (see instructions/COMPATIBILITY.md)
+# ---------------------------------------------------------------------------
+# The schema ``id`` above and every public class / slot / enum / type / PV NAME
+# is part of the import surface that downstream schemas depend on. Therefore:
+#   * NEVER change the schema id or rename a public element — add a new one and
+#     mark the old one ``deprecated:`` instead.
+#   * Only ADD optional slots / enums / permissible values in a minor release;
+#     never make an optional slot required, remove a PV, or tighten a pattern.
+#   * Breaking changes require a MAJOR version bump.
+# tests/test_public_surface.py locks the surface so accidental removals fail CI.
+
+see_also:
+  - https://github.com/linkml/linkml-redcap
+  - https://w3id.org/linkml/redcap-data-dictionary   # sibling schema: REDCap DD
+  - https://github.com/BIH-CEI/rarelink
+  - https://projectredcap.org
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  redcap_record: https://w3id.org/linkml/redcap-record/
+  redcap_dd: https://w3id.org/linkml/redcap-data-dictionary/
+  schema: http://schema.org/
+
+default_prefix: redcap_record
+default_range: string
+
+imports:
+  - linkml:types
+
+
+# =============================================================================
+# TYPES — one typed primitive per REDCap text-validation value space.
+#
+# Each keeps the raw REDCap string (REDCap exports everything as text) while
+# constraining the format and permitting the empty "no value" case, so a
+# project can give every validated field a defined range instead of bare string.
+# A project may instead retype a slot to a native ``date``/``integer``/``float``
+# if it coerces values. ``redcap_date`` replaces the per-project
+# ``union_date_string`` type previously redeclared inside each project.
+# =============================================================================
+types:
+
+  redcap_date:
+    typeof: string
+    description: A REDCap ``date_ymd`` value (YYYY-MM-DD) or an empty string.
+    pattern: "^(\\d{4}-\\d{2}-\\d{2}|)$"
+    uri: xsd:string
+
+  redcap_datetime:
+    typeof: string
+    description: >-
+      A REDCap ``datetime_ymd`` value (YYYY-MM-DD HH:MM, optionally with seconds
+      and a ``T`` or space separator) or an empty string.
+    pattern: "^(\\d{4}-\\d{2}-\\d{2}([ T]\\d{2}:\\d{2}(:\\d{2})?)?|)$"
+    uri: xsd:string
+
+  redcap_time:
+    typeof: string
+    description: A REDCap ``time`` value (HH:MM) or an empty string.
+    pattern: "^(([01]\\d|2[0-3]):[0-5]\\d|)$"
+    uri: xsd:string
+
+  redcap_integer:
+    typeof: string
+    description: A REDCap ``integer``-validated value (raw string) or an empty string.
+    pattern: "^(-?\\d+|)$"
+    uri: xsd:string
+
+  redcap_number:
+    typeof: string
+    description: >-
+      A REDCap ``number``-validated value with a dot decimal separator (raw
+      string) or an empty string. (Comma-decimal locales validate with the
+      ``number_*_comma_decimal`` REDCap types; add a ``redcap_number_comma`` type
+      additively if needed.)
+    pattern: "^(-?\\d+(\\.\\d+)?|)$"
+    uri: xsd:string
+
+  redcap_email:
+    typeof: string
+    description: A REDCap ``email``-validated value or an empty string.
+    pattern: "^([^@\\s]+@[^@\\s]+\\.[^@\\s]+|)$"
+    uri: xsd:string
+
+
+# =============================================================================
+# CLASSES
+# =============================================================================
+classes:
+
+  # ---------------------------------------------------------------------------
+  # FLAT serialization (the flat export row)
+  # ---------------------------------------------------------------------------
+  FlatRecord:
+    description: >-
+      One row of a REDCap flat record export — a single element of the JSON
+      export array, or one CSV data row. It holds the structural columns present
+      in every project's export. A project's flat schema *specialises* this class
+      (``is_a: FlatRecord``) by adding one typed slot per field variable in its
+      data dictionary.
+    abstract: true
+    slots:
+      - record_id
+      - redcap_event_name
+      - redcap_repeat_instrument
+      - redcap_repeat_instance
+      - redcap_data_access_group
+      - redcap_survey_identifier
+
+  # ---------------------------------------------------------------------------
+  # STRUCTURED serialization (the lossless record-grouped form)
+  # ---------------------------------------------------------------------------
+  StructuredRecord:
+    description: >-
+      Root of the structured (record-grouped) serialization: one object per
+      ``record_id``, the lossless re-grouping of the flat export's rows for that
+      record, with its repeating-instrument instances nested in
+      ``repeated_elements``. This is REDCap's own record model serialized
+      hierarchically. Abstract and convention-free: a project *specialises* it
+      (``is_a: StructuredRecord``), marks itself ``tree_root: true``, and adds its
+      typed non-repeating instrument slots; it narrows ``repeated_elements`` to
+      its own specialised ``RepeatedElement`` via ``slot_usage``. The package
+      defines no instrument classes, naming rules, or mappings — those are the
+      project's and rarelink's.
+    abstract: true
+    slots:
+      - record_id
+      - repeated_elements
+    slot_usage:
+      record_id:
+        identifier: true
+        required: true
+
+  RepeatedElement:
+    description: >-
+      One instance of a repeating instrument inside a ``StructuredRecord``,
+      carrying REDCap's ``(redcap_repeat_instrument, redcap_repeat_instance)``
+      identity. A project *specialises* it (``is_a: RepeatedElement``) and adds
+      the instrument's field block(s). This is the canonical wrapper that
+      rarelink and cieinr currently redeclare per repository — import this one
+      instead of redefining it.
+    slots:
+      - redcap_repeat_instrument
+      - redcap_repeat_instance
+
+
+# =============================================================================
+# SLOTS — REDCap's structural columns + the structured container.
+# =============================================================================
+slots:
+
+  record_id:
+    description: >-
+      The REDCap record identifier — the project's first field (primary key).
+      REDCap names this field arbitrarily (commonly ``record_id``); a project
+      whose first field has a different name aliases this slot.
+    range: string
+    required: true
+
+  redcap_event_name:
+    description: >-
+      The unique event name of the row, for longitudinal projects. Empty in
+      classic (non-longitudinal) projects.
+    range: string
+    required: false
+
+  redcap_repeat_instrument:
+    description: >-
+      The machine name (``form_name``) of the repeating instrument this row /
+      element belongs to. Empty for non-repeating data. A project may narrow
+      this to an enum of its own repeating form names for stronger typing.
+    range: string
+    required: false
+
+  redcap_repeat_instance:
+    description: >-
+      The 1-based instance number of the repeating instrument. Empty/absent for
+      non-repeating data.
+    range: integer
+    required: false
+
+  redcap_data_access_group:
+    description: >-
+      The Data Access Group (DAG) the record belongs to, when DAGs are enabled
+      and exported.
+    range: string
+    required: false
+
+  redcap_survey_identifier:
+    description: >-
+      The survey participant identifier, present on rows captured through a
+      public survey link.
+    range: string
+    required: false
+
+  repeated_elements:
+    description: >-
+      The repeating-instrument instances of a structured record, as a single
+      list tagged by ``(instrument, instance)`` — the minimal lossless
+      representation of REDCap's repeats. A project root redeclares the range to
+      its own specialised ``RepeatedElement`` via ``slot_usage``.
+    range: RepeatedElement
+    multivalued: true
+    inlined_as_list: true
+    required: false
+
+
+# =============================================================================
+# ENUMS — REDCap's universal (project-independent) value spaces.
+# =============================================================================
+enums:
+
+  FormCompleteStatus:
+    description: >-
+      REDCap's universal completion-status value space, used by the
+      ``<form_name>_complete`` field REDCap auto-generates for every instrument.
+    permissible_values:
+      "0":
+        description: Incomplete
+      "1":
+        description: Unverified
+      "2":
+        description: Complete
+
+  YesNo:
+    description: Value space of a REDCap built-in ``yesno`` field.
+    permissible_values:
+      "1":
+        description: "Yes"
+      "0":
+        description: "No"
+
+  TrueFalse:
+    description: Value space of a REDCap built-in ``truefalse`` field.
+    permissible_values:
+      "1":
+        description: "True"
+      "0":
+        description: "False"
+
+  CheckboxState:
+    description: >-
+      The per-option export value of a REDCap ``checkbox`` field. Each checkbox
+      option is exported as its own binary variable (``<field>___<code>``)
+      holding one of these values.
+    permissible_values:
+      "1":
+        description: Checked
+      "0":
+        description: Unchecked
