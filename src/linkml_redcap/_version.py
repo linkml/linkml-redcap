@@ -1,8 +1,8 @@
-from importlib.metadata import version, PackageNotFoundError
+"""Resolved package version (falls back when running from a source tree)."""
+
+from importlib.metadata import PackageNotFoundError, version
 
 try:
-    __version__ = version(__name__)
-except PackageNotFoundError:
-    # package not installed
-    __version__ = "0.0.1"
-    __version_tuple__ = (0, 0, 1)
+    __version__ = version("linkml-redcap")
+except PackageNotFoundError:  # not installed (e.g. running from a checkout)
+    __version__ = "0.1.0"

@@ -1,0 +1,10 @@
+# Ref.: https://github.com/crate-ci/typos (spell checker)
+[default.extend-words]
+linke = "linke"
+
+[files]
+extend-exclude = [
+  "LICENSE",
+  "poetry.lock",
+  "pyproject.toml",
+]

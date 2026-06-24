@@ -34,7 +34,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .venv
-          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install dependencies
         run: poetry install --with dev --no-interaction
@@ -42,12 +42,16 @@ jobs:
       - name: Lint with ruff
         run: poetry run ruff check src tests
 
-      - name: Validate LinkML schema
+      - name: Validate LinkML schemas
         run: |
-          poetry run linkml-lint src/linkml_redcap/data_dictionary/schema/redcap_data_dictionary.yaml
-          poetry run gen-json-schema src/linkml_redcap/data_dictionary/schema/redcap_data_dictionary.yaml > /dev/null
-          poetry run gen-python src/linkml_redcap/data_dictionary/schema/redcap_data_dictionary.yaml > /dev/null
-          poetry run gen-pydantic src/linkml_redcap/data_dictionary/schema/redcap_data_dictionary.yaml > /dev/null
+          for schema in \
+            src/linkml_redcap/data_dictionary/schema/redcap_data_dictionary.yaml \
+            src/linkml_redcap/record/schema/redcap_record.yaml; do
+            echo "== $schema =="
+            poetry run linkml-lint --ignore-warnings "$schema"
+            poetry run gen-json-schema "$schema" > /dev/null
+            poetry run gen-pydantic "$schema" > /dev/null
+          done
 
       - name: Run tests
         run: poetry run pytest --cov=linkml_redcap --cov-report=term-missing

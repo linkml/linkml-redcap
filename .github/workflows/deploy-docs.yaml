@@ -1,0 +1,31 @@
+name: Deploy docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write  # needed to push the built site to the gh-pages branch
+
+jobs:
+  deploy-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install dependencies (docs + dev for gen-doc)
+        run: poetry install --with docs,dev
+
+      - name: Generate schema reference
+        run: bash scripts/gen_reference.sh
+
+      - name: Build and deploy to GitHub Pages
+        run: poetry run mkdocs gh-deploy --force --no-history

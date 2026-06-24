@@ -30,7 +30,7 @@ jobs:
           TAG_VERSION=${GITHUB_REF#refs/tags/v}
           PKG_VERSION=$(poetry version --short)
           if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
-            echo "ERROR: tag version ($TAG_VERSION) does not match package version ($PKG_VERSION)"
+            echo "ERROR: tag $TAG_VERSION != package version $PKG_VERSION"
             exit 1
           fi
           echo "Version check passed: $TAG_VERSION"
