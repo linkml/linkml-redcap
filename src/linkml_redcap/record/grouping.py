@@ -195,7 +195,9 @@ def ungroup_records(
         for field, value in block.items():
             if isinstance(value, dict):
                 _flatten_block(target, value)
-            elif not isinstance(value, list):
+            elif isinstance(value, list):
+                raise ValueError(f"Cannot ungroup list-valued field '{field}' into REDCap flat rows")
+            else:
                 target[field] = value
 
     rows: list[dict[str, Any]] = []
