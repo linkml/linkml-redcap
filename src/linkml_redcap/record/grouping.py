@@ -117,7 +117,17 @@ def group_flat_records(
             output). If False (default, classic projects), rows are grouped on
             ``record_id`` only.
         drop_empty: If True, empty-string / None field values are omitted from
-            the output (useful to keep grouped JSON compact before mapping).
+            each record and repeated element. REDCap's flat export pads every
+            row to full width with empty strings; since REDCap treats empty as
+            "no value", dropping it removes only padding, not information. This
+            is the vendor-neutral way to compact the wide flat export (often a
+            ~10x size reduction on real registries) before mapping, and it is
+            safe across records with differently-populated instruments: a field
+            absent from one element and present in another both map correctly.
+            NOTE: dropping empties discards which columns existed, so to
+            reconstruct a full-width REDCap *import* file you must pass the
+            project's full-width ``template`` to :func:`ungroup_records` (the
+            round-trip is lossless with the template, narrow without it).
         cast_instance: If True, ``redcap_repeat_instance`` is coerced to ``int``
             (REDCap exports it as a string).
 
