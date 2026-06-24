@@ -1,0 +1,39 @@
+[
+  {
+    "record_id": "1",
+    "demographics_name": "Ada",
+    "demographics_dob": "1990-01-01",
+    "demographics_complete": "2",
+    "repeated_elements": [
+      {
+        "redcap_repeat_instrument": "visit",
+        "redcap_repeat_instance": 1,
+        "visit_date": "2020-01-01",
+        "visit_weight": "60",
+        "visit_complete": "2"
+      },
+      {
+        "redcap_repeat_instrument": "visit",
+        "redcap_repeat_instance": 2,
+        "visit_date": "2020-06-01",
+        "visit_weight": "62",
+        "visit_complete": "2"
+      }
+    ]
+  },
+  {
+    "record_id": "2",
+    "demographics_name": "Linus",
+    "demographics_dob": "1985-05-05",
+    "demographics_complete": "2",
+    "repeated_elements": [
+      {
+        "redcap_repeat_instrument": "visit",
+        "redcap_repeat_instance": 1,
+        "visit_date": "2021-03-03",
+        "visit_weight": "70",
+        "visit_complete": "2"
+      }
+    ]
+  }
+]
