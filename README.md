@@ -3,7 +3,7 @@
 [![CI](https://github.com/linkml/linkml-redcap/actions/workflows/ci.yaml/badge.svg)](https://github.com/linkml/linkml-redcap/actions/workflows/ci.yaml)
 [![PyPI version](https://badge.fury.io/py/linkml-redcap.svg)](https://badge.fury.io/py/linkml-redcap)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![MkDocs](https://linkml.github.io/linkml-redcap)]
+[![Docs](https://img.shields.io/badge/docs-mkdocs-blue.svg)](https://linkml.github.io/linkml-redcap)
 
 LinkML schemas modelling **REDCap structures**. This package is the canonical,
 vendor-neutral source of the REDCap primitives that downstream projects build
