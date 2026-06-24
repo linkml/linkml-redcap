@@ -19,8 +19,11 @@ itself**. Two submodules, both modelling real REDCap constructs:
 **Decision:** everything here corresponds 1:1 to a real REDCap construct. Nothing
 project-specific is defined or duplicated. For example, the [RareLink](https://rarelink.readthedocs.io/en/latest/index.html)
 *rules* (variable-naming conventions, instrument-naming conventions, the
-annotation profile, and the **structured/nested representation**) live in the
-**rarelink** repository and are layered on top of these primitives.
+annotation profile, and the **named-instrument-block specialization** of the
+structured form — the typed `Disease` / `PhenotypicFeature` / … classes) live in
+the **rarelink** repository and are layered on top of these primitives. The
+*abstract, generic structured envelope* they specialise (`StructuredRecord` /
+`RepeatedElement`) is defined here — see §2.
 
 **Why:** a shared dependency must have exactly one owner per concept. If the
 REDCap representation lived partly here and partly in each consumer repository
@@ -69,6 +72,51 @@ existing RareLink data is in. EAV is trivially pivot-to-flat and rarely used in
 this pipeline; XML/ODM are alternate serialisations of the same content. Crucially
 the structural slots here are the *same discriminators* EAV uses, so an
 `EavRecord` class can be added later **additively** without breaking anything.
+
+**EAV vs. our compaction (why we did not adopt EAV).** EAV's appeal is that it
+omits empty cells — but that is exactly what `group_flat_records(..., drop_empty=
+True)` already does (§3a), while keeping the data in the flat/structured shape the
+pipeline consumes. EAV would instead force a *pivot* (re-assemble rows by
+`(record, instrument, instance)`, un-melt `field_name`/`value` back into columns,
+and specially handle checkbox `field___code` entities) before anything could use
+it. So EAV trades a clean 1:1 ingest for a sparseness we can produce natively. We
+keep flat JSON as the core and treat EAV/XML as optional future *readers*, never
+the centre.
+
+## 3a. Compaction: drop empties, keep a template for the import round-trip
+
+The flat export is *wide* — every row carries the full column set, mostly empty
+(REDCap pads "no value" with `""`). On real registries the padding is ~90% of the
+bytes (measured: a 117-column cohort compacts to ~8% of its cells, ~11% of its
+JSON, with `drop_empty=True`).
+
+**Decision:** the supported way to compact the grouped form is
+`group_flat_records(..., drop_empty=True)` — omit empty values from each record and
+repeated element. We do **not** add named-instrument bucketing to the grouping
+helper to save size (that needs the project's field→instrument map and belongs in
+`linkml-map`; and on real data it is actually *larger* than drop-empty, since it
+keeps the empty slots inside each named block).
+
+**Why it is vendor-neutral and safe.** Dropping `""`/`None` removes REDCap's own
+padding, not information — REDCap itself treats empty as absent, and our typed
+primitives already permit the empty case (§4). It is safe across records whose
+instruments are differently populated: a field present in one disease instance and
+absent from another both map correctly, because a `linkml-map` mapper reads the
+slots that are present and emits nothing for those that are not — identical in
+meaning to reading an empty string. (Verified on the real evaluation cohort: zero
+non-empty cells are ever dropped.)
+
+**The template contract.** Dropping empties discards *which* columns existed, so
+reconstructing a full-width REDCap **import** file requires the project's
+full-width template. `ungroup_records(grouped, template=T)` re-pads every row to
+the complete column set; `ungroup_records(grouped)` (no template) returns rows
+carrying only the populated fields — fine for inspection or for feeding the
+mapper, but **not** a complete REDCap import header. So:
+`ungroup(group(rows, drop_empty=True), template=T)` is lossless (verified on real
+data); without the template it preserves every datum but not the full width. The
+full-width template is exactly what the planned **rarelink-project-copier**
+guarantees each scaffolded project ships, so the import round-trip "just works"
+per project.
 
 ## 4. Maximum typing — never `Any`, never bare `string` where REDCap constrains
 
