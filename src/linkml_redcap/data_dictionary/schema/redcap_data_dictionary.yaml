@@ -7,14 +7,17 @@ description: >-
   dictionaries (CSV format). This schema defines the rules, constraints, and
   relationships of all 18 REDCap data dictionary columns, enabling
   programmatic validation, generation, and transformation of REDCap instruments.
-  It also provides extension points for ontology-based data models (e.g.,
-  RareLink-CDM) that embed coded terminologies directly into REDCap's variable
-  naming, choice encoding, and field annotation structures.
+  It is a vendor-neutral model of REDCap itself; RareLink-style ontology
+  conventions (variable-name prefixes, coded choices, structured field
+  annotations, BioPortal/ontology curation) are layered on top in the rarelink
+  repository, not defined here.
 
 license: MIT
 version: 0.1.0
 
 see_also:
+  - https://github.com/linkml/linkml-redcap
+  - https://w3id.org/linkml/redcap-record   # sibling schema: REDCap *record* data
   - https://github.com/BIH-CEI/rarelink
   - https://rarelink.readthedocs.io
   - https://projectredcap.org
@@ -23,23 +26,6 @@ prefixes:
   linkml: https://w3id.org/linkml/
   redcap_dd: https://w3id.org/linkml/redcap-data-dictionary/
   schema: http://schema.org/
-  SNOMEDCT: http://snomed.info/sct/
-  LOINC: http://loinc.org/
-  HP: http://purl.obolibrary.org/obo/HP_
-  MONDO: http://purl.obolibrary.org/obo/MONDO_
-  OMIM: https://omim.org/entry/
-  ORDO: http://www.orpha.net/ORDO/
-  NCIT: http://purl.obolibrary.org/obo/NCIT_
-  HGNC: https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/
-  ICD10CM: http://hl7.org/fhir/sid/icd-10-cm/
-  ICD11: https://icd.who.int/browse/2024-01/mms/en/
-  UO: http://purl.obolibrary.org/obo/UO_
-  ECO: http://purl.obolibrary.org/obo/ECO_
-  MAXO: http://purl.obolibrary.org/obo/MAXO_
-  ICF: https://www.who.int/classifications/icf/
-  GA4GH: https://www.ga4gh.org/
-  HL7FHIR: https://www.hl7.org/fhir/
-  ISO3166: https://www.iso.org/iso-3166-country-codes.html/
 
 default_prefix: redcap_dd
 default_range: string
@@ -62,6 +48,13 @@ classes:
       (forms). This is the top-level container that corresponds to the CSV file
       uploaded to REDCap. Fields must be grouped contiguously by form_name.
     tree_root: true
+    comments:
+      - >-
+        The first field in the data dictionary must be the record identifier
+        (typically record_id) and must be of field_type 'text'.
+      - >-
+        All fields belonging to the same form_name must be in contiguous rows;
+        no interleaving of forms is permitted.
     attributes:
       fields:
         description: >-
@@ -71,13 +64,6 @@ classes:
         multivalued: true
         inlined_as_list: true
         required: true
-    rules:
-      - description: >-
-          The first field in the data dictionary must be the record identifier
-          (typically record_id) and must be of field_type 'text'.
-      - description: >-
-          All fields belonging to the same form_name must be in contiguous
-          rows. No interleaving of forms is permitted.
 
   # ---------------------------------------------------------------------------
   # Core REDCap Field (mirrors one row of the CSV)
@@ -223,10 +209,11 @@ classes:
 
       field_annotation:
         description: >-
-          Free-text annotation field. In ontology-based models (e.g.,
-          RareLink), this contains structured metadata including the
-          semantic variable code, ontology-coded choices, ontology
-          versions, and mappings to interoperability standards.
+          REDCap's field annotation column — free text plus action tags
+          (e.g. @HIDDEN, @READONLY, @CALCTEXT). Any structured convention layered
+          inside it (semantic variable codes, ontology-coded choices, ontology
+          versions, interoperability mappings) is defined downstream by rarelink,
+          not by this base schema.
         range: string
         required: false
 
@@ -255,57 +242,6 @@ classes:
           (e.g., 'Female', 'Male', 'Unknown').
         range: string
         required: true
-
-  # ---------------------------------------------------------------------------
-  # Ontology Annotation (structured field annotation for ontology-based models)
-  # ---------------------------------------------------------------------------
-  OntologyAnnotation:
-    description: >-
-      Structured metadata embedded in a field's annotation column for
-      ontology-based data models. This formalises the annotation pattern
-      used in RareLink and similar frameworks where each field carries
-      its semantic definition, coded choices, ontology versions, and
-      mappings to interoperability standards (HL7 FHIR, GA4GH Phenopackets).
-    attributes:
-
-      variable_code:
-        description: >-
-          The ontology code defining the semantic meaning of this field.
-          Format: 'ONTOLOGY:CODE | Human-Readable Label |'
-          Example: 'SNOMED:184099003 | Date of Birth |'
-        range: string
-        required: true
-
-      coded_choices:
-        description: >-
-          List of ontology-coded choices with their labels. Each entry
-          follows the format 'ONTOLOGY:CODE | Label'.
-          Set to 'n/a' for free-text fields without coded choices.
-        range: string
-        multivalued: true
-        required: false
-
-      ontology_versions:
-        description: >-
-          The ontology version(s) referenced by this field's variable
-          code and/or choices. Example: 'SNOMED CT 2025AB'
-        range: string
-        multivalued: true
-        required: false
-
-      fhir_mapping:
-        description: >-
-          The HL7 FHIR resource path this field maps to.
-          Example: 'Patient.birthDate'
-        range: string
-        required: false
-
-      phenopacket_mapping:
-        description: >-
-          The GA4GH Phenopacket Schema element this field maps to.
-          Example: 'Individual.date_of_birth'
-        range: string
-        required: false
 
   # ---------------------------------------------------------------------------
   # Instrument (logical grouping derived from form_name)
@@ -419,8 +355,14 @@ enums:
         description: Datetime in DD-MM-YYYY HH:MM format.
       datetime_seconds_ymd:
         description: Datetime with seconds in YYYY-MM-DD HH:MM:SS format.
+      datetime_seconds_mdy:
+        description: Datetime with seconds in MM-DD-YYYY HH:MM:SS format.
+      datetime_seconds_dmy:
+        description: Datetime with seconds in DD-MM-YYYY HH:MM:SS format.
       time:
         description: Time in HH:MM format.
+      time_mm_ss:
+        description: Time in MM:SS format.
       integer:
         description: Whole number (no decimals).
       number:
@@ -429,6 +371,16 @@ enums:
         description: Number with 1 decimal place.
       number_2dp:
         description: Number with 2 decimal places.
+      number_3dp:
+        description: Number with 3 decimal places.
+      number_4dp:
+        description: Number with 4 decimal places.
+      number_comma_decimal:
+        description: Decimal number using a comma as the decimal separator (e.g. de_DE).
+      number_1dp_comma_decimal:
+        description: Number with 1 decimal place, comma decimal separator.
+      number_2dp_comma_decimal:
+        description: Number with 2 decimal places, comma decimal separator.
       phone:
         description: Phone number format.
       email:
@@ -451,105 +403,19 @@ enums:
         description: Right Horizontal
 
   IdentifierStatus:
-    description: Whether a field contains Protected Health Information.
+    description: >-
+      Whether a field contains Protected Health Information. The REDCap column is
+      'y' for identifiers and blank otherwise; a blank cell is represented as an
+      absent value (the slot is optional), not as a permissible value.
     permissible_values:
       y:
         description: Field contains identifying information (PHI).
-      '':
-        description: Field does not contain identifying information.
 
   MatrixRanking:
-    description: Whether matrix ranking is enabled.
+    description: >-
+      Whether matrix ranking is enabled. 'y' when enabled and blank otherwise;
+      a blank cell is represented as an absent value (the slot is optional), not
+      as a permissible value.
     permissible_values:
       y:
         description: Ranking is enabled for this matrix group.
-      '':
-        description: Ranking is not enabled.
-
-  # ---------------------------------------------------------------------------
-  # Ontology-Based Variable Naming Prefixes (RareLink convention)
-  # ---------------------------------------------------------------------------
-  OntologyPrefix:
-    description: >-
-      Recognised ontology prefixes used in ontology-based REDCap variable
-      naming. In the RareLink convention, variable names encode their
-      semantic source as: prefix_conceptid (e.g., snomedct_184099003).
-      This enum defines the valid prefixes.
-    permissible_values:
-      snomedct:
-        description: SNOMED CT concept
-        meaning: SNOMEDCT:0
-      loinc:
-        description: LOINC observation code
-        meaning: LOINC:0
-      hp:
-        description: Human Phenotype Ontology term
-        meaning: HP:0000000
-      mondo:
-        description: Monarch Disease Ontology term
-        meaning: MONDO:0000000
-      ncit:
-        description: NCI Thesaurus concept
-        meaning: NCIT:C0
-      hl7fhir:
-        description: HL7 FHIR element reference
-        meaning: HL7FHIR:0
-      ga4gh:
-        description: GA4GH schema element reference
-        meaning: GA4GH:0
-      ordo:
-        description: Orphanet Rare Disease Ontology term
-        meaning: ORDO:0
-      omim:
-        description: OMIM entry reference
-        meaning: OMIM:0
-      hgnc:
-        description: HGNC gene symbol
-        meaning: HGNC:0
-      maxo:
-        description: Medical Action Ontology term
-        meaning: MAXO:0
-      icf:
-        description: ICF classification code
-        meaning: ICF:0
-      ln:
-        description: LOINC panel or group code (alternative prefix)
-        meaning: LOINC:0
-
-  # ---------------------------------------------------------------------------
-  # BioPortal Ontology References (for text field autocomplete)
-  # ---------------------------------------------------------------------------
-  BioPortalOntology:
-    description: >-
-      Ontology identifiers available through REDCap's BioPortal
-      integration for text field autocomplete. Used in the choices
-      column as 'BIOPORTAL:ONTOLOGY_NAME'.
-    permissible_values:
-      HP:
-        description: Human Phenotype Ontology
-      MONDO:
-        description: Monarch Disease Ontology
-      SNOMEDCT:
-        description: SNOMED CT
-      ICD10CM:
-        description: ICD-10 Clinical Modification
-      OMIM:
-        description: Online Mendelian Inheritance in Man
-      ORDO:
-        description: Orphanet Rare Disease Ontology
-      LOINC:
-        description: Logical Observation Identifiers Names and Codes
-      HGNC-NR:
-        description: HGNC gene nomenclature (non-redundant)
-      UO:
-        description: Units of Measurement Ontology
-      NCIT:
-        description: NCI Thesaurus
-      NCBITAXON:
-        description: NCBI Taxonomy
-      ECO:
-        description: Evidence and Conclusion Ontology
-      MAXO:
-        description: Medical Action Ontology
-      ICF:
-        description: International Classification of Functioning

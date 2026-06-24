@@ -1,0 +1,53 @@
+site_name: linkml-redcap
+site_description: LinkML schemas modelling REDCap structures
+site_url: https://linkml.github.io/linkml-redcap
+repo_url: https://github.com/linkml/linkml-redcap
+repo_name: linkml/linkml-redcap
+edit_uri: ""
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - toc.integrate
+  palette:
+    - scheme: default
+      primary: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+plugins:
+  - search
+  - include-markdown
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+nav:
+  - Home: index.md
+  - Schema reference:
+      - Record: reference/record/index.md
+      - Data dictionary: reference/data_dictionary/index.md
+  - Design decisions: design-decisions.md
+  - Mapping workflow: mapping-workflow.md
+  - Compatibility: compatibility.md
+  - Contributing: contributing.md
+
+# NOTE: the "Schema reference" pages under docs/reference/ are GENERATED from the
+# schemas by scripts/gen_reference.sh (gen-doc). They are git-ignored. Run that
+# script before `mkdocs serve` / `mkdocs build`, or the two nav entries above
+# will 404. CI (deploy-docs.yaml) runs it automatically before deploying.

@@ -130,9 +130,15 @@ Before any of these artifacts are produced, the meta-schema ensures:
 2. **Form names** are lowercase with underscores only
 3. **Field types** are valid REDCap types (dropdown, text, radio, etc.)
 4. **Choice encoding** follows `raw_value, Label` pipe-delimited format
-5. **Choice raw values** use the ontology prefix convention (snomedct_XXXX)
-6. **BioPortal references** use valid ontology identifiers
-7. **Date fields** have `date_ymd` validation type
-8. **Branching logic** references existing variable names
-9. **Annotations** follow the structured Variable/Choices/Versions/Mapping format
-10. **Required fields** for ontology-based models have proper values
+5. **Date fields** use a valid REDCap text-validation type (e.g. `date_ymd`)
+6. **Branching logic** references existing variable names
+7. **Required fields** carry a valid `y` flag
+
+> Note: the *ontology* conventions an immunodeficiency example like this relies on
+> — the `snomedct_…` / `hp_…` variable-prefix convention, the structured
+> `field_annotation` grammar (Variable / Choices / Versions / Mapping), and
+> BioPortal ontology references — are **RareLink rules, not REDCap facts**, and
+> are therefore **not** validated by `linkml-redcap` (see DESIGN_DECISIONS §10).
+> They are validated by the RareLink layer that owns those conventions. This file
+> shows them only to illustrate the end-to-end RareLink workflow the REDCap base
+> feeds into.
