@@ -1,0 +1,961 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="LinkML schemas modelling REDCap structures">
+      
+      
+      
+        <link rel="canonical" href="https://linkml.github.io/linkml-redcap/design-decisions/">
+      
+      
+        <link rel="prev" href="../reference/data_dictionary/">
+      
+      
+        <link rel="next" href="../mapping-workflow/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Design decisions - linkml-redcap</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#design-decisions" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="linkml-redcap" class="md-header__button md-logo" aria-label="linkml-redcap" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            linkml-redcap
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Design decisions
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/linkml/linkml-redcap" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    linkml/linkml-redcap
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="linkml-redcap" class="md-nav__button md-logo" aria-label="linkml-redcap" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    linkml-redcap
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/linkml/linkml-redcap" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    linkml/linkml-redcap
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schema reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Schema reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/record/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Record
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/data_dictionary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data dictionary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design decisions
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design decisions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-scope-redcap-primitives-only-one-source-of-truth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Scope: REDCap primitives only — one source of truth
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-including-the-structured-serialization-the-key-scope-decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Including the structured serialization (the key scope decision)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-typeflat-data-only-eav-and-odmxml-out-of-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The type=flat data only (EAV and ODM/XML out of scope)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3a-compaction-drop-empties-keep-a-template-for-the-import-round-trip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3a. Compaction: drop empties, keep a template for the import round-trip
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-maximum-typing-never-any-never-bare-string-where-redcap-constrains" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Maximum typing — never Any, never bare string where REDCap constrains
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-union_date_string-redcap_date-consolidation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. The union_date_string → redcap_date consolidation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-grouping-helper-stays-here-transformation-specs-do-not" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Grouping helper stays here; transformation specs do not
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-how-consumers-use-it-anchored-on-flatrecord" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. How consumers use it (anchored on FlatRecord)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-backwards-compatibility-as-a-first-class-constraint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Backwards compatibility as a first-class constraint
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-engineering-choices-favouring-simplicity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Engineering choices favouring simplicity
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-ontology-conventions-removed-rarelink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Ontology conventions removed (→ rarelink)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-items-to-revisit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open items to revisit
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mapping-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mapping workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compatibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compatibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<!-- This page renders instructions/DESIGN_DECISIONS.md (single source of truth). -->
+<h1 id="design-decisions">Design Decisions<a class="headerlink" href="#design-decisions" title="Permanent link">&para;</a></h1>
+<p>A record of <em>what</em> <code>linkml-redcap</code> is, the decisions made building it, and <em>why</em>.
+Read alongside <code>COMPATIBILITY.md</code> (the stability policy) and <code>MAPPING_WORKFLOW.md</code>
+(how consumers use it).</p>
+<h2 id="1-scope-redcap-primitives-only-one-source-of-truth">1. Scope: REDCap primitives only — one source of truth<a class="headerlink" href="#1-scope-redcap-primitives-only-one-source-of-truth" title="Permanent link">&para;</a></h2>
+<p><code>linkml-redcap</code> is the single, authoritative, vendor-neutral model of <strong>REDCap
+itself</strong>. Two submodules, both modelling real REDCap constructs:</p>
+<ul>
+<li><strong><code>data_dictionary</code></strong> — the REDCap data dictionary (the 18-column CSV that
+  <em>describes</em> a project): fields, choices, field/validation types, etc.</li>
+<li><strong><code>record</code></strong> — the REDCap <strong>record</strong> (the data a project <em>exports</em>), in the two
+  serializations the data uses: <code>FlatRecord</code> (the flat export row) and
+  <code>StructuredRecord</code> / <code>RepeatedElement</code> (the lossless record-grouped form),
+  plus the structural columns and universal value spaces.</li>
+</ul>
+<p><strong>Decision:</strong> everything here corresponds 1:1 to a real REDCap construct. Nothing
+project-specific is defined or duplicated. For example, the <a href="https://rarelink.readthedocs.io/en/latest/index.html">RareLink</a>
+<em>rules</em> (variable-naming conventions, instrument-naming conventions, the
+annotation profile, and the <strong>named-instrument-block specialization</strong> of the
+structured form — the typed <code>Disease</code> / <code>PhenotypicFeature</code> / … classes) live in
+the <strong>rarelink</strong> repository and are layered on top of these primitives. The
+<em>abstract, generic structured envelope</em> they specialise (<code>StructuredRecord</code> /
+<code>RepeatedElement</code>) is defined here — see §2.</p>
+<p><strong>Why:</strong> a shared dependency must have exactly one owner per concept. If the
+REDCap representation lived partly here and partly in each consumer repository
+(e.g., RareLink), they would drift.</p>
+<h2 id="2-including-the-structured-serialization-the-key-scope-decision">2. Including the structured serialization (the key scope decision)<a class="headerlink" href="#2-including-the-structured-serialization-the-key-scope-decision" title="Permanent link">&para;</a></h2>
+<p>The structured/nested form (<code>StructuredRecord</code> + <code>RepeatedElement</code> +
+<code>repeated_elements</code>) is <strong>included here, generically</strong>. This was debated — REDCap
+never literally <em>emits</em> this shape — and the decision rests on a specific reading:</p>
+<p><strong>Why include it.</strong> REDCap's data model genuinely contains a record and its
+repeating-instrument instances, identified by <code>(redcap_repeat_instrument,
+redcap_repeat_instance)</code>. The flat export is one serialization of that model;
+grouping the rows back into "one record with its repeats nested" is a <strong>lossless
+re-serialization</strong> of REDCap's own model — it adds nothing and loses nothing. So
+it is vendor-neutral REDCap, not an invention. Three further reasons:</p>
+<ul>
+<li><strong>Cohesion</strong> — the lossless <code>flat ⇄ structured</code> conversion (<code>grouping.py</code>)
+  already lives here; its output shape should have its schema here too.</li>
+<li><strong>One source of truth</strong> — previous repos each redeclare a <code>RepeatedElement</code>
+  today; defining it once here lets them import the canonical class and delete
+  their copies (the duplication this package set out to remove).</li>
+<li><strong>Dependency layering</strong> — a consumer that wants structured REDCap data but not
+  Phenopackets then depends on <code>linkml-redcap</code> alone; rarelink is added only for
+  the rare-disease semantics and subsequent Phenopackets export. The package
+  stays useful to the wider REDCap/LinkML community.</li>
+</ul>
+<p><strong>The guardrail that keeps it neutral.</strong> <code>StructuredRecord</code> / <code>RepeatedElement</code>
+are <strong>abstract, generic and lossless</strong>: <code>StructuredRecord</code> = <code>record_id</code> + a
+single <code>(instrument, instance)</code>-tagged <code>repeated_elements</code> list (the minimal
+lossless representation of REDCap's repeats — a per-instrument-list alternative
+would impose <em>more</em> structure); <code>RepeatedElement</code> = the two REDCap repeat fields.</p>
+<h2 id="3-the-typeflat-data-only-eav-and-odmxml-out-of-scope">3. The <code>type=flat</code> data only (EAV and ODM/XML out of scope)<a class="headerlink" href="#3-the-typeflat-data-only-eav-and-odmxml-out-of-scope" title="Permanent link">&para;</a></h2>
+<p>REDCap's record export offers <code>type=flat</code> (one row per record/event/repeat) and
+<code>type=eav</code> (a long, one-datapoint-per-row entity-attribute-value format — <em>not</em>
+truly nested). It also serialises to CSV/JSON/XML/ODM.</p>
+<p><strong>Decision:</strong> model the <code>type=flat</code> data (in both its flat and structured
+serializations, per §2). EAV and XML/ODM are out of scope.</p>
+<p><strong>Why:</strong> flat is the canonical export everyone uses and the shape all the
+existing RareLink data is in. EAV is trivially pivot-to-flat and rarely used in
+this pipeline; XML/ODM are alternate serialisations of the same content. Crucially
+the structural slots here are the <em>same discriminators</em> EAV uses, so an
+<code>EavRecord</code> class can be added later <strong>additively</strong> without breaking anything.</p>
+<p><strong>EAV vs. our compaction (why we did not adopt EAV).</strong> EAV's appeal is that it
+omits empty cells — but that is exactly what <code>group_flat_records(..., drop_empty=
+True)</code> already does (§3a), while keeping the data in the flat/structured shape the
+pipeline consumes. EAV would instead force a <em>pivot</em> (re-assemble rows by
+<code>(record, instrument, instance)</code>, un-melt <code>field_name</code>/<code>value</code> back into columns,
+and specially handle checkbox <code>field___code</code> entities) before anything could use
+it. So EAV trades a clean 1:1 ingest for a sparseness we can produce natively. We
+keep flat JSON as the core and treat EAV/XML as optional future <em>readers</em>, never
+the centre.</p>
+<h2 id="3a-compaction-drop-empties-keep-a-template-for-the-import-round-trip">3a. Compaction: drop empties, keep a template for the import round-trip<a class="headerlink" href="#3a-compaction-drop-empties-keep-a-template-for-the-import-round-trip" title="Permanent link">&para;</a></h2>
+<p>The flat export is <em>wide</em> — every row carries the full column set, mostly empty
+(REDCap pads "no value" with <code>""</code>). On real registries the padding is ~90% of the
+bytes (measured: a 117-column cohort compacts to ~8% of its cells, ~11% of its
+JSON, with <code>drop_empty=True</code>).</p>
+<p><strong>Decision:</strong> the supported way to compact the grouped form is
+<code>group_flat_records(..., drop_empty=True)</code> — omit empty values from each record and
+repeated element. We do <strong>not</strong> add named-instrument bucketing to the grouping
+helper to save size (that needs the project's field→instrument map and belongs in
+<code>linkml-map</code>; and on real data it is actually <em>larger</em> than drop-empty, since it
+keeps the empty slots inside each named block).</p>
+<p><strong>Why it is vendor-neutral and safe.</strong> Dropping <code>""</code>/<code>None</code> removes REDCap's own
+padding, not information — REDCap itself treats empty as absent, and our typed
+primitives already permit the empty case (§4). It is safe across records whose
+instruments are differently populated: a field present in one disease instance and
+absent from another both map correctly, because a <code>linkml-map</code> mapper reads the
+slots that are present and emits nothing for those that are not — identical in
+meaning to reading an empty string. (Verified on the real evaluation cohort: zero
+non-empty cells are ever dropped.)</p>
+<p><strong>The template contract.</strong> Dropping empties discards <em>which</em> columns existed, so
+reconstructing a full-width REDCap <strong>import</strong> file requires the project's
+full-width template. <code>ungroup_records(grouped, template=T)</code> re-pads every row to
+the complete column set; <code>ungroup_records(grouped)</code> (no template) returns rows
+carrying only the populated fields — fine for inspection or for feeding the
+mapper, but <strong>not</strong> a complete REDCap import header. So:
+<code>ungroup(group(rows, drop_empty=True), template=T)</code> is lossless (verified on real
+data); without the template it preserves every datum but not the full width. The
+full-width template is exactly what the planned <strong>rarelink-project-copier</strong>
+guarantees each scaffolded project ships, so the import round-trip "just works"
+per project.</p>
+<h2 id="4-maximum-typing-never-any-never-bare-string-where-redcap-constrains">4. Maximum typing — never <code>Any</code>, never bare <code>string</code> where REDCap constrains<a class="headerlink" href="#4-maximum-typing-never-any-never-bare-string-where-redcap-constrains" title="Permanent link">&para;</a></h2>
+<p>REDCap exports every value as a string and uses an empty string for "no value".</p>
+<p><strong>Decision:</strong> provide a typed primitive for each REDCap value space —
+- enums <code>FormCompleteStatus</code> (0/1/2), <code>YesNo</code>, <code>TrueFalse</code>, <code>CheckboxState</code>;
+- types <code>redcap_date</code>, <code>redcap_datetime</code>, <code>redcap_time</code>, <code>redcap_integer</code>,
+  <code>redcap_number</code>, <code>redcap_email</code> (each keeps the raw string, constrains the
+  format, and permits the empty case);
+— so a project's flat schema can give <strong>every</strong> field a defined range. The
+structural slots are themselves typed (<code>record_id: string</code>,
+<code>redcap_repeat_instance: integer</code>, etc.). <code>default_range</code> is <code>string</code> (REDCap's
+on-the-wire type), never <code>Any</code>.</p>
+<p><strong>Why:</strong> good practice for a schema others build on: a fully-typed flat schema
+makes the downstream <code>linkml-map</code> transformations checkable and the data
+validatable. Projects are encouraged to narrow further (e.g. constrain
+<code>redcap_repeat_instrument</code> to an enum of their own form names).</p>
+<p>More value spaces (e.g. <code>redcap_number_comma</code> for comma-decimal locales,
+<code>redcap_phone</code>, <code>redcap_zipcode</code>) can be added additively when a project needs
+them, rather than shipping speculative or locale-wrong patterns now.</p>
+<h2 id="5-the-union_date_string-redcap_date-consolidation">5. The <code>union_date_string</code> → <code>redcap_date</code> consolidation<a class="headerlink" href="#5-the-union_date_string-redcap_date-consolidation" title="Permanent link">&para;</a></h2>
+<p>Each project currently redeclares a <code>union_date_string</code> type (a date-or-empty
+string). <strong>Decision:</strong> define it once here as <code>redcap_date</code> (plus the datetime/
+time siblings). <strong>Why:</strong> removes duplicated type definitions across projects; the
+"date or empty string" behaviour is a REDCap fact, not a project choice.</p>
+<h2 id="6-grouping-helper-stays-here-transformation-specs-do-not">6. Grouping helper stays here; transformation specs do not<a class="headerlink" href="#6-grouping-helper-stays-here-transformation-specs-do-not" title="Permanent link">&para;</a></h2>
+<p><code>group_flat_records</code> / <code>ungroup_records</code> perform the flat ⇄ per-record reshaping
+that <code>linkml-map</code> structurally cannot (a cardinality change: many rows → one
+record + a repeats list).</p>
+<p><strong>Decision:</strong> keep this <em>generic</em> helper in the package, but keep all
+<em>declarative field/enum mapping</em> out of it (that is <code>linkml-map</code>'s job, written
+per project/rarelink).</p>
+<p><strong>Why:</strong> the grouping depends only on REDCap-native fields (<code>record_id</code>,
+<code>redcap_repeat_instrument</code>, <code>redcap_repeat_instance</code>) and is byte-identical for
+every project, so it is a REDCap-level utility. Its output is exactly a
+<code>StructuredRecord</code>-shaped dict (untyped at the field level); the <strong>typed
+instrument classes</strong> that give those fields meaning are the consuming project's,
+and the conventions/mappings are rarelink's.</p>
+<h2 id="7-how-consumers-use-it-anchored-on-flatrecord">7. How consumers use it (anchored on <code>FlatRecord</code>)<a class="headerlink" href="#7-how-consumers-use-it-anchored-on-flatrecord" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Tabular → REDCap-flat:</strong> a <code>linkml-map</code> spec from an external source schema
+   to the project's <code>is_a: FlatRecord</code> schema, with <strong>SSSOM</strong> for value-level
+   term mappings. Output is valid, typed REDCap-flat data.</li>
+<li><strong>REDCap-flat → Phenopackets/FHIR:</strong> <code>group_flat_records</code> → <code>linkml-map</code>
+   (to the rarelink structured representation) → the rarelink Phenopacket/FHIR
+   engine (+ SSSOM for value→ontology mappings).</li>
+</ol>
+<p>See <code>MAPPING_WORKFLOW.md</code> for the worked pipeline.</p>
+<h2 id="8-backwards-compatibility-as-a-first-class-constraint">8. Backwards compatibility as a first-class constraint<a class="headerlink" href="#8-backwards-compatibility-as-a-first-class-constraint" title="Permanent link">&para;</a></h2>
+<p>Downstream schemas <code>import</code> this package by <code>id</code> and reference its elements by
+name. <strong>Decision:</strong> treat the schema <code>id</code>s and public class/slot/enum/type/PV
+names as a stable API — additive minors only, deprecate-don't-remove, breaking
+changes ⇒ major bump. Enforced by <code>tests/test_public_surface.py</code>, a subset check
+that fails CI if any frozen name disappears (so a break can only happen as a
+conscious edit). Schemas ship inside the wheel and load via
+<code>importlib.resources</code>, so a pinned version always sees exactly its own schema.
+Full rationale in <code>COMPATIBILITY.md</code>.</p>
+<h2 id="9-engineering-choices-favouring-simplicity">9. Engineering choices favouring simplicity<a class="headerlink" href="#9-engineering-choices-favouring-simplicity" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Schema-first, minimal runtime.</strong> Core dependency is just <code>linkml-runtime</code>;
+  the only runtime code is the small, dependency-free grouping module.</li>
+<li><strong>Loader API parity.</strong> Each submodule exposes the same <code>SCHEMA_FILENAME</code>,
+  <code>schema_path()</code>, <code>schema_view()</code> — nothing to relearn between submodules.</li>
+<li><strong><code>linkml-lint --ignore-warnings</code> in CI.</strong> The numeric REDCap PV names
+  (<code>"0"/"1"/"2"</code>) intentionally trip the <code>standard_naming</code> style rule; they must
+  equal REDCap's stored values, so we suppress the <em>warning</em> (errors still fail
+  CI) rather than misname the values.</li>
+</ul>
+<h2 id="10-ontology-conventions-removed-rarelink">10. Ontology conventions removed (→ rarelink)<a class="headerlink" href="#10-ontology-conventions-removed-rarelink" title="Permanent link">&para;</a></h2>
+<p><code>OntologyPrefix</code> (the <code>snomedct_184099003</code> variable-naming convention),
+<code>OntologyAnnotation</code> (the structured <code>field_annotation</code> grammar: variable code,
+coded choices, ontology versions, FHIR/Phenopacket mappings), and
+<code>BioPortalOntology</code> (a curated ontology list) were <strong>removed</strong> from the
+<code>data_dictionary</code> schema. They fail the neutrality test (§2): you cannot point at
+them and name a REDCap construct — they are RareLink rules. They will be added to
+<strong>rarelink</strong> as an ontology-conventions schema/overlay.</p>
+<p>This keeps the package faithful to its purpose — the <em>canonical, vendor-neutral</em>
+REDCap DD model that non-RareLink consumers (e.g. linkml/schema-automator) can
+depend on — and aligns with the planned <strong>rarelink-project-copier</strong>: a
+datamodel-agnostic template defining the shared rules for all RareLink-based
+repos (rarelink-cdm, extensions like CIEINR, other datamodels like
+marfan-charité). Those shared rules, including the ontology conventions, belong
+in the RareLink layer, not in the REDCap base.</p>
+<p>Note: <code>BioPortalOntology</code> was a closed enum of 14 ontologies, but REDCap's
+BioPortal autocomplete accepts <em>any</em> BioPortal ontology — so the enum actually
+mismodelled REDCap. The REDCap-native fact (the <code>BIOPORTAL:&lt;NAME&gt;</code> choices-column
+syntax) is retained as a description on <code>Field</code>.</p>
+<h2 id="open-items-to-revisit">Open items to revisit<a class="headerlink" href="#open-items-to-revisit" title="Permanent link">&para;</a></h2>
+<ul>
+<li>A few <code>Field</code> / <code>Choice</code> / <code>Instrument</code> descriptions still use "In RareLink,
+  …" illustrative examples. They are honestly framed as examples (not REDCap
+  rules) and define no structure, so they are left for now; tidy if a fully
+  example-free base is wanted.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "toc.integrate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
