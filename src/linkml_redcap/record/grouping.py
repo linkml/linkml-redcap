@@ -232,7 +232,9 @@ def ungroup_records(
                     continue
                 if isinstance(value, dict):
                     _flatten_block(row, value)
-                elif not isinstance(value, list):
+                elif isinstance(value, list):
+                    raise ValueError(f"Cannot ungroup list-valued field '{key}' into REDCap flat rows")
+                else:
                     row[key] = value
             rows.append(row)
     return rows
