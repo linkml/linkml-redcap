@@ -6,7 +6,9 @@ repos:
     hooks:
       - id: check-toml
       - id: check-yaml
-        # mkdocs.yml uses !!python/name tags unsupported by the safe YAML loader
+        # Exclude mkdocs.yml: Material/mermaid extensions can add !!python/name
+        # tags that pyyaml's safe loader (used by check-yaml) cannot parse.
+        # yamllint still syntax-checks this file.
         exclude: ^mkdocs\.yml$
       - id: end-of-file-fixer
       - id: trailing-whitespace

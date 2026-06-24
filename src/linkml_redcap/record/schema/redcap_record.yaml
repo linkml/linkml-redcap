@@ -197,6 +197,12 @@ classes:
     slots:
       - redcap_repeat_instrument
       - redcap_repeat_instance
+    slot_usage:
+      redcap_repeat_instance:
+        description: >-
+          The 1-based instance number of this repeating-instrument instance
+          (always present in the structured form).
+        range: integer
 
 
 # =============================================================================
@@ -229,9 +235,10 @@ slots:
 
   redcap_repeat_instance:
     description: >-
-      The 1-based instance number of the repeating instrument. Empty/absent for
-      non-repeating data.
-    range: integer
+      The 1-based instance number of the repeating instrument. In a flat export
+      this is an integer-valued string and is empty for non-repeating rows; the
+      structured ``RepeatedElement`` narrows it to a native ``integer``.
+    range: redcap_integer
     required: false
 
   redcap_data_access_group:

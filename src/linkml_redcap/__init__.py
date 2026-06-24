@@ -10,6 +10,7 @@ Two submodules are available:
 """
 
 from linkml_redcap import data_dictionary, record
+from linkml_redcap._version import __version__
 from linkml_redcap.data_dictionary import schema_path, schema_view
 
 __all__ = [
@@ -19,5 +20,3 @@ __all__ = [
     "schema_view",
     "__version__",
 ]
-
-__version__ = "0.1.0"

@@ -132,7 +132,7 @@ def group_flat_records(
             if _is_empty(instrument):
                 # Non-repeating row: merge its (non-structural) fields onto the root.
                 for field, value in entry.items():
-                    if field in STRUCTURAL_KEYS:
+                    if field in STRUCTURAL_KEYS or field == record_id_key:
                         continue
                     if drop_empty and _is_empty(value):
                         continue
@@ -147,7 +147,7 @@ def group_flat_records(
                     "redcap_repeat_instance": instance,
                 }
                 for field, value in entry.items():
-                    if field in STRUCTURAL_KEYS:
+                    if field in STRUCTURAL_KEYS or field == record_id_key:
                         continue
                     if drop_empty and _is_empty(value):
                         continue

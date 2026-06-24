@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from importlib.resources import as_file, files
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from linkml_redcap._resources import resolve_schema
 from linkml_redcap.record.grouping import (
     STRUCTURAL_KEYS,
     group_flat_records,
@@ -29,9 +29,7 @@ __all__ = [
 
 def schema_path() -> Path:
     """Return the filesystem path to the bundled record-envelope schema YAML."""
-    resource = files(__name__).joinpath("schema").joinpath(SCHEMA_FILENAME)
-    with as_file(resource) as p:
-        return Path(p)
+    return resolve_schema(__name__, SCHEMA_FILENAME)
 
 
 def schema_view() -> SchemaView:
