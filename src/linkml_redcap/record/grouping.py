@@ -38,7 +38,7 @@ from __future__ import annotations
 import contextlib
 from collections import defaultdict
 from collections.abc import Iterable
-from typing import Any
+from typing import Any, NoReturn
 
 # Structural keys that REDCap adds to every flat row. They are handled
 # explicitly by the grouping logic and never treated as instrument fields.
@@ -60,6 +60,21 @@ __all__ = [
 
 def _is_empty(value: Any) -> bool:
     return value is None or value == ""
+
+
+def _reject_list_value(field: str) -> NoReturn:
+    """Raise rather than silently drop a multivalued field during ungrouping.
+
+    REDCap's flat model has no list column: multivalued data must be encoded
+    into flat columns (e.g. checkbox ``field___code`` columns) or a repeating
+    instrument *before* ungrouping. Dropping it silently would corrupt the
+    import, so surface it loudly instead.
+    """
+    raise ValueError(
+        f"Cannot ungroup list-valued field {field!r} into REDCap flat rows: "
+        "encode multivalued data into REDCap's flat columns (e.g. checkbox "
+        "'field___code' columns) or a repeating instrument before ungrouping."
+    )
 
 
 def group_flat_records(
@@ -136,6 +151,11 @@ def group_flat_records(
                         continue
                     if drop_empty and _is_empty(value):
                         continue
+                    # Don't let a later blank row clobber a value already
+                    # captured (e.g. collapsing a longitudinal export with
+                    # event_aware=False).
+                    if _is_empty(value) and not _is_empty(record.get(field)):
+                        continue
                     record[field] = value
             else:
                 instance = entry.get("redcap_repeat_instance", "")
@@ -176,6 +196,9 @@ def ungroup_records(
         records: Grouped records (record_id + flat fields + repeated_elements).
             Nested instrument blocks (one level of ``dict`` values) are flattened
             so this also accepts the structured output of a ``linkml-map`` run.
+            Multivalued (list-valued) fields must already be encoded into
+            REDCap's flat columns; this function raises on any list it finds
+            rather than silently dropping it.
         template: Optional full-width row template (all variables -> "") so every
             emitted row carries the complete column set REDCap expects on import.
             When omitted, rows contain only the fields present in the input.
@@ -184,6 +207,10 @@ def ungroup_records(
 
     Returns:
         A flat list of row dicts suitable for serialising to a REDCap import.
+
+    Raises:
+        ValueError: If a field holds a list (multivalued data that REDCap's flat
+            model cannot represent); encode it into flat columns first.
     """
 
     def _flatten_block(target: dict[str, Any], block: Any) -> None:
@@ -193,7 +220,9 @@ def ungroup_records(
         for field, value in block.items():
             if isinstance(value, dict):
                 _flatten_block(target, value)
-            elif not isinstance(value, list):
+            elif isinstance(value, list):
+                _reject_list_value(field)
+            else:
                 target[field] = value
 
     rows: list[dict[str, Any]] = []
@@ -210,7 +239,9 @@ def ungroup_records(
                 continue
             if isinstance(value, dict):
                 _flatten_block(base, value)
-            elif not isinstance(value, list):
+            elif isinstance(value, list):
+                _reject_list_value(key)
+            else:
                 base[key] = value
         rows.append(base)
 
@@ -226,7 +257,9 @@ def ungroup_records(
                     continue
                 if isinstance(value, dict):
                     _flatten_block(row, value)
-                elif not isinstance(value, list):
+                elif isinstance(value, list):
+                    _reject_list_value(key)
+                else:
                     row[key] = value
             rows.append(row)
     return rows
