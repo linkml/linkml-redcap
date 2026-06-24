@@ -136,6 +136,8 @@ def group_flat_records(
                         continue
                     if drop_empty and _is_empty(value):
                         continue
+                    if _is_empty(value) and field in record and not _is_empty(record[field]):
+                        continue
                     record[field] = value
             else:
                 instance = entry.get("redcap_repeat_instance", "")
