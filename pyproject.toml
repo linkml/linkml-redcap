@@ -74,3 +74,6 @@ ignore = ["E501"]  # line length handled by formatter
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra --strict-markers"
+
+[project.scripts]
+linkml-redcap-importmap = "linkml_redcap._importmap:main"
