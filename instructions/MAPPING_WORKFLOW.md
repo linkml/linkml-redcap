@@ -22,7 +22,7 @@ REDCap constrains the value, never `Any`):
 # myproject_flat.yaml
 imports:
   - linkml:types
-  - redcap_record                      # from linkml-redcap (record submodule)
+  - https://w3id.org/linkml/redcap-record   # from linkml-redcap; URI form is depth-safe
 classes:
   MyProjectFlatRecord:
     is_a: FlatRecord                    # inherits record_id + redcap_* structural slots
@@ -49,7 +49,7 @@ project-specific:
 # myproject_cdm.yaml
 imports:
   - linkml:types
-  - redcap_record                      # from linkml-redcap (record submodule)
+  - https://w3id.org/linkml/redcap-record   # from linkml-redcap; URI form is depth-safe
 classes:
   MyProjectRecord:
     is_a: StructuredRecord             # inherits record_id + repeated_elements
