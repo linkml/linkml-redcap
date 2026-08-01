@@ -10,6 +10,32 @@ as a breaking change.
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-08-01
+
+### Added
+
+- `importmap()` / `write_importmap()` and the `linkml-redcap-importmap` console
+  script, so a downstream schema can resolve its `imports:` from the installed
+  package instead of copying the schema YAML into its own tree. Use
+  `SchemaView(path, importmap=importmap())` in Python, or
+  `linkml-redcap-importmap importmap.json` followed by
+  `gen-project --importmap importmap.json ...` for the LinkML CLI generators.
+
+### Changed
+
+- Documentation now shows the **canonical URI** import form
+  (`https://w3id.org/linkml/redcap-record`) rather than the bare name
+  `redcap_record`. A bare import cannot resolve from a schema in a subdirectory:
+  linkml-runtime's `imports_closure()` rewrites it relative to the importing file
+  (`if "/" in sn and ":" not in i`), so it never reaches the importmap. Imports
+  containing `:` are exempt. Bare names remain mapped for schemas that sit next to
+  the import root.
+
+### Notes
+
+- No schema element changed, so the compatibility surface in
+  `instructions/COMPATIBILITY.md` is untouched.
+
 ## [0.1.0] - 2026-06-24
 
 Initial release.

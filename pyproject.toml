@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "linkml-redcap"
-version = "0.1.0"
+version = "0.1.1"
 description = "LinkML schemas modelling REDCap structures — the data dictionary and the record-data envelope"
 authors = [
     "Adam SL Graefe <adam.graefe@charite.de>",
@@ -46,6 +46,9 @@ include = [
 python = ">=3.10,<3.13"
 linkml-runtime = ">=1.9.4"
 
+[tool.poetry.scripts]
+linkml-redcap-importmap = "linkml_redcap._importmap:main"
+
 [tool.poetry.group.dev.dependencies]
 linkml = ">=1.8.0"       # for gen-pydantic, gen-doc, linkml-lint, linkml-validate
 pytest = ">=8.0"
@@ -74,6 +77,3 @@ ignore = ["E501"]  # line length handled by formatter
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra --strict-markers"
-
-[project.scripts]
-linkml-redcap-importmap = "linkml_redcap._importmap:main"
