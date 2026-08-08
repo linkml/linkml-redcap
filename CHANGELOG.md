@@ -10,6 +10,37 @@ as a breaking change.
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-08-08
+
+### Added
+
+- **`record.checkbox`** — lossless, vendor-neutral bridge between REDCap's flat
+  checkbox export columns (`<field>___<code>` holding `"1"`/`"0"`) and the
+  semantic multivalued-slot shape (`field: ["1", "2"]`) a LinkML project schema
+  declares:
+  - `collapse_checkboxes(record, checkbox_map)` — flat columns → list of
+    checked option codes; descends into `repeated_elements` and arbitrary
+    nesting, so it composes directly with `group_flat_records`;
+  - `expand_checkboxes(record, checkbox_map)` — the full-width inverse (every
+    option column emitted), producing exactly the shape `ungroup_records`
+    accepts for a REDCap import file; raises on undeclared codes instead of
+    dropping them;
+  - `infer_checkbox_map(columns)` — recover `{field: [codes]}` from the export
+    columns themselves;
+  - `checkbox_map_from_data_dictionary(rows)` — build the authoritative map
+    from data dictionary rows (both the 18 CSV headers and the snake_case
+    schema aliases are accepted);
+  - `checkbox_column(field, code)` — reproduces REDCap's column-name
+    sanitisation (lower-case; non-`[a-z0-9_]` → `_`, so option code `-2`
+    becomes `field____2`), keeping signed/alphanumeric codes round-trippable.
+  All exported from `linkml_redcap.record`.
+
+### Notes
+
+- Purely additive; no schema element changed. The `CheckboxState` enum already
+  documented the per-column value space — this release adds the structural
+  conversion that was previously left to each consuming project (e.g., rarelink)
+
 ## [0.1.1] - 2026-08-01
 
 ### Added

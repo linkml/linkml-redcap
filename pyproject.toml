@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "linkml-redcap"
-version = "0.1.1"
+version = "0.1.2"
 description = "LinkML schemas modelling REDCap structures — the data dictionary and the record-data envelope"
 authors = [
     "Adam SL Graefe <adam.graefe@charite.de>",
