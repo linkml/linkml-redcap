@@ -6,6 +6,14 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from linkml_redcap._resources import resolve_schema
+from linkml_redcap.record.checkbox import (
+    CHECKBOX_SEP,
+    checkbox_column,
+    checkbox_map_from_data_dictionary,
+    collapse_checkboxes,
+    expand_checkboxes,
+    infer_checkbox_map,
+)
 from linkml_redcap.record.grouping import (
     STRUCTURAL_KEYS,
     group_flat_records,
@@ -20,10 +28,16 @@ SCHEMA_FILENAME = "redcap_record.yaml"
 __all__ = [
     "SCHEMA_FILENAME",
     "STRUCTURAL_KEYS",
+    "CHECKBOX_SEP",
     "schema_path",
     "schema_view",
     "group_flat_records",
     "ungroup_records",
+    "checkbox_column",
+    "checkbox_map_from_data_dictionary",
+    "collapse_checkboxes",
+    "expand_checkboxes",
+    "infer_checkbox_map",
 ]
 
 
