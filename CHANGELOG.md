@@ -39,8 +39,7 @@ as a breaking change.
 
 - Purely additive; no schema element changed. The `CheckboxState` enum already
   documented the per-column value space — this release adds the structural
-  conversion that was previously left to each consuming project (rarelink,
-  tir-charite).
+  conversion that was previously left to each consuming project (e.g., rarelink)
 
 ## [0.1.1] - 2026-08-01
 
